@@ -1,6 +1,5 @@
 # STUDENT PROFILE | ملف المتدرب
 
-استخدم المعلومات اللازمة للتقييم فقط. لا تضف رقم هوية أو هاتفًا أو عنوانًا أو token أو بيانات حساسة.
 
 - Display name | الاسم للعرض: Yousef Al-Mutiri
 - GitHub username: Yousef0197
