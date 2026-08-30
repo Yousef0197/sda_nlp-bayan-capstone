@@ -1,7 +1,8 @@
 # PROGRESS — Bayan Gates A–E
 
 **Student GitHub:** https://github.com/Yousef0197
-**Repository:** https://github.com/Yousef0197/sda_nlp-bayan-capstone**Last updated:** 2026-08-30
+**Repository:** https://github.com/Yousef0197/sda_nlp-bayan-capstone
+**Last updated:** 2026-08-30
 
 لا توضع علامة ✅ إلا بعد وجود دليل قابل للفحص، مثل نتيجة اختبار، أو Notebook منفّذ، أو قرار موثق، أو Commit عام.
 
