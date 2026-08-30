@@ -1,0 +1,186 @@
+name: Day 1 cleanup
+
+on:
+  push:
+    paths:
+      - '.github/workflows/day1_cleanup.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    if: contains(github.event.head_commit.message, '[run-day1-cleanup]')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: RED — confirm duplicate notebook evidence exists
+        id: red
+        continue-on-error: true
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, sys
+          specs = [
+              ('notebooks/01_text_processing_tokenization.ipynb', 'DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS'),
+              ('notebooks/02_attention_transformers.ipynb', 'DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS'),
+          ]
+          problems = []
+          for path, marker in specs:
+              nb = json.load(open(path, encoding='utf-8'))
+              marker_cells = [c for c in nb['cells'] if marker in ''.join(c.get('source', []))]
+              ids = [c.get('id') for c in nb['cells'] if c.get('id')]
+              duplicate_ids = sorted({x for x in ids if ids.count(x) > 1})
+              print(f'{path}: marker_cells={len(marker_cells)}, duplicate_ids={duplicate_ids}')
+              if len(marker_cells) != 1 or duplicate_ids:
+                  problems.append(path)
+          if problems:
+              print('RED confirmed: duplicate notebook evidence is present.')
+              sys.exit(1)
+          print('Unexpectedly clean; no duplicate bug reproduced.')
+          PY
+
+      - name: Require RED reproduction
+        shell: bash
+        run: |
+          if [ "${{ steps.red.outcome }}" != "failure" ]; then
+            echo "Expected duplicate-evidence validation to fail before cleanup."
+            exit 1
+          fi
+
+      - name: Clean duplicated cells and synchronize Day 1 documentation
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          def dedupe_marker_cell(path: str, marker: str) -> None:
+              p = Path(path)
+              nb = json.loads(p.read_text(encoding='utf-8'))
+              kept = []
+              seen = False
+              removed = 0
+              for cell in nb['cells']:
+                  source = ''.join(cell.get('source', []))
+                  if marker in source:
+                      if seen:
+                          removed += 1
+                          continue
+                      seen = True
+                  kept.append(cell)
+              if not seen:
+                  raise RuntimeError(f'Marker not found in {path}: {marker}')
+              nb['cells'] = kept
+              ids = [c.get('id') for c in kept if c.get('id')]
+              dup_ids = sorted({x for x in ids if ids.count(x) > 1})
+              if dup_ids:
+                  raise RuntimeError(f'Duplicate cell ids remain in {path}: {dup_ids}')
+              p.write_text(json.dumps(nb, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+              print(f'{path}: removed {removed} duplicate marker cell(s)')
+
+          dedupe_marker_cell(
+              'notebooks/01_text_processing_tokenization.ipynb',
+              'DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS',
+          )
+          dedupe_marker_cell(
+              'notebooks/02_attention_transformers.ipynb',
+              'DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS',
+          )
+
+          readme_path = Path('README.md')
+          readme = readme_path.read_text(encoding='utf-8')
+          if '## Day 1 official Explore / Distinction extensions' not in readme:
+              readme += '''\n\n---\n\n## Day 1 official Explore / Distinction extensions\n\nThe final Day 1 notebooks also include the official Explore and Distinction evidence added after the initial Gate A closure.\n\n### Notebook 01\n\n- `DAY1_EXPLORE_LOCAL_VS_MBERT_5=PASS`\n- `DAY1_EXPLORE_PROFILE_COMPARISON=PASS`\n- `DAY1_DISTINCTION_DIALECT_SLICE=PASS`\n- `DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS`\n\n### Notebook 02\n\n- `DAY1_CORE_CHANGE_V=PASS`\n- `DAY1_EXPLORE_KEEP_MASK=PASS`\n- `DAY1_EXPLORE_PADDING_MASK=PASS`\n- `DAY1_DISTINCTION_SDPA_MULTI_SEED=PASS`\n- `DAY1_DISTINCTION_T_SQUARED=PASS`\n- `DAY1_NOTEBOOK2_DECISION_PROMPT=PASS`\n- `DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS`\n\nThe multi-seed NumPy/PyTorch SDPA comparison recorded a maximum difference of `3.331e-16`. The sequence-length experiment measured `T = 32, 64, 128, 256` and documented the expected `T²` growth of the attention score matrix.\n'''
+              readme_path.write_text(readme, encoding='utf-8')
+
+          progress_path = Path('PROGRESS.md')
+          progress = progress_path.read_text(encoding='utf-8')
+          if '## Day 1 — Official Explore / Distinction extensions' not in progress:
+              block = '''\n\n## Day 1 — Official Explore / Distinction extensions\n\nبعد إغلاق Gate A الأساسي، أُكملت عناصر Explore وDistinction الرسمية الإضافية وحُفظت أدلتها في الدفترين.\n\n### Notebook 01\n\n- `DAY1_EXPLORE_LOCAL_VS_MBERT_5=PASS`\n- `DAY1_EXPLORE_PROFILE_COMPARISON=PASS`\n- `DAY1_DISTINCTION_DIALECT_SLICE=PASS`\n- `DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS`\n- Evidence commit: `f86bd66` — `feat(day1): complete notebook 01 explore and distinction`\n\n### Notebook 02\n\n- `DAY1_CORE_CHANGE_V=PASS`\n- `DAY1_EXPLORE_KEEP_MASK=PASS`\n- `DAY1_EXPLORE_PADDING_MASK=PASS`\n- `DAY1_DISTINCTION_SDPA_MULTI_SEED=PASS`\n- `DAY1_DISTINCTION_T_SQUARED=PASS`\n- `DAY1_NOTEBOOK2_DECISION_PROMPT=PASS`\n- `DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS`\n- Multi-seed NumPy/PyTorch SDPA maximum difference: `3.331e-16`\n- Evidence commit: `65a0fb1` — `feat(day1): complete notebook 02 explore and distinction`\n\nتم تنظيف النسخ المكررة من خلايا الأدلة مع الإبقاء على نسخة منفذة واحدة من كل خلية.\n\n'''
+              anchor = '\n## Final release\n'
+              if anchor in progress:
+                  progress = progress.replace(anchor, block + anchor, 1)
+              else:
+                  progress += block
+              progress_path.write_text(progress, encoding='utf-8')
+
+          report_path = Path('reports/day1_report.md')
+          report = report_path.read_text(encoding='utf-8')
+          report = report.replace(
+              'القرار ليس نهائيًا وغير قابل للمراجعة.',
+              'القرار ليس نهائيًا، وهو قابل للمراجعة.',
+          )
+          if '## 24. Official Explore / Distinction extensions' not in report:
+              report += '''\n\n---\n\n## 24. Official Explore / Distinction extensions\n\nأُكملت أيضًا عناصر Explore وDistinction الرسمية الإضافية في اليوم الأول.\n\n### Notebook 01\n\n- مقارنة المرمّز المحلي مع mBERT على خمس جمل اصطناعية: `DAY1_EXPLORE_LOCAL_VS_MBERT_5=PASS`.\n- مقارنة ملفي معالجة عربيين وقياس أثرهما على عدد الرموز: `DAY1_EXPLORE_PROFILE_COMPARISON=PASS`.\n- إضافة شريحة لهجية مع الحفاظ على النص الخام: `DAY1_DISTINCTION_DIALECT_SLICE=PASS`.\n- علامة الإكمال: `DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS`.\n\n### Notebook 02\n\n- تغيير `V` مع ثبات أوزان الانتباه: `DAY1_CORE_CHANGE_V=PASS`.\n- تغيير keep mask وتفسير النتيجة: `DAY1_EXPLORE_KEEP_MASK=PASS`.\n- Padding Mask لتسلسلين مع أوزان صفرية للحشو: `DAY1_EXPLORE_PADDING_MASK=PASS`.\n- مقارنة NumPy وPyTorch SDPA عبر البذور `7`, `42`, `2026`: `DAY1_DISTINCTION_SDPA_MULTI_SEED=PASS`.\n- أكبر فرق عددي في المقارنة متعددة البذور: `3.331e-16`.\n- قياس الانتباه عند `T=32,64,128,256` وتوثيق نمو مصفوفة Scores مع `T²`: `DAY1_DISTINCTION_T_SQUARED=PASS`.\n- إجابة سؤال القرار في أربع نقاط: `DAY1_NOTEBOOK2_DECISION_PROMPT=PASS`.\n- علامة الإكمال: `DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS`.\n\nقياسات الزمن المسجلة في تشغيل Notebook 02 الحالي هي: `0.0848 ms`, `0.8357 ms`, `5.4511 ms`, و`12.2282 ms` للأطوال `32`, `64`, `128`, و`256` على الترتيب. هذه القياسات تخص بيئة التشغيل تلك ولا تُعمم على الأجهزة الأخرى.\n'''
+          report_path.write_text(report, encoding='utf-8')
+          PY
+
+      - name: GREEN — validate cleaned notebooks and synchronized docs
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          specs = [
+              ('notebooks/01_text_processing_tokenization.ipynb', 'DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS'),
+              ('notebooks/02_attention_transformers.ipynb', 'DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS'),
+          ]
+          for path, marker in specs:
+              nb = json.load(open(path, encoding='utf-8'))
+              marker_cells = [c for c in nb['cells'] if marker in ''.join(c.get('source', []))]
+              assert len(marker_cells) == 1, (path, len(marker_cells))
+              ids = [c.get('id') for c in nb['cells'] if c.get('id')]
+              assert len(ids) == len(set(ids)), f'duplicate cell IDs remain in {path}'
+              outputs = ''.join(
+                  ''.join(out.get('text', []))
+                  for c in marker_cells
+                  for out in c.get('outputs', [])
+                  if out.get('output_type') == 'stream'
+              )
+              assert marker in outputs, f'saved PASS output missing in {path}'
+              print(f'{path}: exactly one extension cell, unique IDs, saved PASS output present')
+
+          readme = Path('README.md').read_text(encoding='utf-8')
+          progress = Path('PROGRESS.md').read_text(encoding='utf-8')
+          report = Path('reports/day1_report.md').read_text(encoding='utf-8')
+          for marker in [
+              'DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS',
+              'DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS',
+          ]:
+              assert marker in readme
+              assert marker in progress
+              assert marker in report
+          assert 'القرار ليس نهائيًا وغير قابل للمراجعة.' not in report
+          assert 'القرار ليس نهائيًا، وهو قابل للمراجعة.' in report
+          print('Documentation synchronization checks=PASS')
+          PY
+
+      - name: Install Day 1 test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -q pytest numpy -r requirements-day1.txt
+
+      - name: Run Day 1 automated tests
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m pytest -q tests/test_day1_preprocessing.py tests/test_day1_tokenization.py tests/test_day1_attention.py
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add notebooks/01_text_processing_tokenization.ipynb notebooks/02_attention_transformers.ipynb README.md PROGRESS.md reports/day1_report.md
+          git diff --cached --check
+          git commit -m "chore(day1): remove duplicate evidence and sync docs"
+          git push origin main
