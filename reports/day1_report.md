@@ -284,7 +284,7 @@ Marker:
 
 سبب الاختيار هو التوازن الحالي بين العربية والإنجليزية عند الحاجة إلى مسار موحد.
 
-القرار ليس نهائيًا وغير قابل للمراجعة.
+القرار ليس نهائيًا، وهو قابل للمراجعة.
 
 سيُعاد تقييمه باستخدام:
 
@@ -649,3 +649,30 @@ Distinction evidence:
 والمرحلة التالية للمشروع:
 
 `Gate B — Classification, NER, and QA`
+
+
+---
+
+## 24. Official Explore / Distinction extensions
+
+أُكملت أيضًا عناصر Explore وDistinction الرسمية الإضافية في اليوم الأول.
+
+### Notebook 01
+
+- مقارنة المرمّز المحلي مع mBERT على خمس جمل اصطناعية: `DAY1_EXPLORE_LOCAL_VS_MBERT_5=PASS`.
+- مقارنة ملفي معالجة عربيين وقياس أثرهما على عدد الرموز: `DAY1_EXPLORE_PROFILE_COMPARISON=PASS`.
+- إضافة شريحة لهجية مع الحفاظ على النص الخام: `DAY1_DISTINCTION_DIALECT_SLICE=PASS`.
+- علامة الإكمال: `DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS`.
+
+### Notebook 02
+
+- تغيير `V` مع ثبات أوزان الانتباه: `DAY1_CORE_CHANGE_V=PASS`.
+- تغيير keep mask وتفسير النتيجة: `DAY1_EXPLORE_KEEP_MASK=PASS`.
+- Padding Mask لتسلسلين مع أوزان صفرية للحشو: `DAY1_EXPLORE_PADDING_MASK=PASS`.
+- مقارنة NumPy وPyTorch SDPA عبر البذور `7`, `42`, `2026`: `DAY1_DISTINCTION_SDPA_MULTI_SEED=PASS`.
+- أكبر فرق عددي في المقارنة متعددة البذور: `3.331e-16`.
+- قياس الانتباه عند `T=32,64,128,256` وتوثيق نمو مصفوفة Scores مع `T²`: `DAY1_DISTINCTION_T_SQUARED=PASS`.
+- إجابة سؤال القرار في أربع نقاط: `DAY1_NOTEBOOK2_DECISION_PROMPT=PASS`.
+- علامة الإكمال: `DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS`.
+
+قياسات الزمن المسجلة في تشغيل Notebook 02 الحالي هي: `0.0848 ms`, `0.8357 ms`, `5.4511 ms`, و`12.2282 ms` للأطوال `32`, `64`, `128`, و`256` على الترتيب. هذه القياسات تخص بيئة التشغيل تلك ولا تُعمم على الأجهزة الأخرى.

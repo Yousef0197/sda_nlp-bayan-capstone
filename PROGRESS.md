@@ -330,6 +330,34 @@ Gate A requirements are supported by reproducible Day 1 evidence.
 Gate A مغلق توثيقيًا وتقنيًا، والمشروع جاهز للانتقال إلى Gate B.
 ---
 
+
+## Day 1 — Official Explore / Distinction extensions
+
+بعد إغلاق Gate A الأساسي، أُكملت عناصر Explore وDistinction الرسمية الإضافية وحُفظت أدلتها في الدفترين.
+
+### Notebook 01
+
+- `DAY1_EXPLORE_LOCAL_VS_MBERT_5=PASS`
+- `DAY1_EXPLORE_PROFILE_COMPARISON=PASS`
+- `DAY1_DISTINCTION_DIALECT_SLICE=PASS`
+- `DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS`
+- Evidence commit: `f86bd66` — `feat(day1): complete notebook 01 explore and distinction`
+
+### Notebook 02
+
+- `DAY1_CORE_CHANGE_V=PASS`
+- `DAY1_EXPLORE_KEEP_MASK=PASS`
+- `DAY1_EXPLORE_PADDING_MASK=PASS`
+- `DAY1_DISTINCTION_SDPA_MULTI_SEED=PASS`
+- `DAY1_DISTINCTION_T_SQUARED=PASS`
+- `DAY1_NOTEBOOK2_DECISION_PROMPT=PASS`
+- `DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS`
+- Multi-seed NumPy/PyTorch SDPA maximum difference: `3.331e-16`
+- Evidence commit: `65a0fb1` — `feat(day1): complete notebook 02 explore and distinction`
+
+مراجعة JSON للدفترين أثبتت أن كل مجموعة إضافات موجودة في خلية واحدة فقط وأن معرّفات الخلايا فريدة؛ لا توجد خلايا مكررة تحتاج إلى حذف.
+
+
 ## Final release
 
 - Final commit: not created yet

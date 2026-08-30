@@ -670,3 +670,29 @@ PYTHONPATH=src python scripts/validate_submission.py . --require-tag
 سيتم تثبيت معلومات الترخيص النهائية للمشروع قبل الإصدار:
 
 `submission-v1.0`
+
+
+---
+
+## Day 1 official Explore / Distinction extensions
+
+The final Day 1 notebooks include the official Explore and Distinction evidence added after the initial Gate A closure.
+
+### Notebook 01
+
+- `DAY1_EXPLORE_LOCAL_VS_MBERT_5=PASS`
+- `DAY1_EXPLORE_PROFILE_COMPARISON=PASS`
+- `DAY1_DISTINCTION_DIALECT_SLICE=PASS`
+- `DAY1_NOTEBOOK1_OFFICIAL_EXTENSIONS=PASS`
+
+### Notebook 02
+
+- `DAY1_CORE_CHANGE_V=PASS`
+- `DAY1_EXPLORE_KEEP_MASK=PASS`
+- `DAY1_EXPLORE_PADDING_MASK=PASS`
+- `DAY1_DISTINCTION_SDPA_MULTI_SEED=PASS`
+- `DAY1_DISTINCTION_T_SQUARED=PASS`
+- `DAY1_NOTEBOOK2_DECISION_PROMPT=PASS`
+- `DAY1_NOTEBOOK2_OFFICIAL_EXTENSIONS=PASS`
+
+The multi-seed NumPy/PyTorch SDPA comparison recorded a maximum difference of `3.331e-16`. The sequence-length experiment measured `T = 32, 64, 128, 256` and documented the expected `T²` growth of the attention score matrix.
