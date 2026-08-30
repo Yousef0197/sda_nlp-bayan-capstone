@@ -12,8 +12,8 @@
 
 | Gate | Status | Required evidence | Commit/report links | Blocker/next action |
 |---|---|---|---|---|
-| A — ingest | ✅ PASSED | preprocessing/tokenisation tests + attention tests + tokenizer decision + notebooks 01/02 | [Notebook 01 clean run](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/c12b5013ee8419db4ea4f59699fd49e3f95750c2) · [Tokenizer decision evidence](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/dfc4083264202b25b32cbcfaac335c349591aba7) · [Arabic clitic test](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/3b1c903) · [Decision alignment](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/fb647d6213c6830f022d1aa03cc3d051a7eaa543) · [Notebook 02](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/24db4e4e7b0b6816727e95471129237d46358ddc) | Gate A evidence complete; continue to Gate B after Day 1 documentation review |
-| B — tasks | ⬜ NOT_STARTED | classification + NER + QA evidence | — | البدء بعد إغلاق توثيق Day 1 |
+| A — ingest | ✅ PASSED | preprocessing/tokenisation tests + attention tests + tokenizer decision + notebooks 01/02 | [Notebook 01 clean run](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/c12b5013ee8419db4ea4f59699fd49e3f95750c2) · [Tokenizer decision evidence](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/dfc4083264202b25b32cbcfaac335c349591aba7) · [Arabic clitic test](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/3b1c903) · [Decision alignment](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/fb647d6213c6830f022d1aa03cc3d051a7eaa543) · [Notebook 02](https://github.com/Yousef0197/sda_nlp-bayan-capstone/commit/24db4e4e7b0b6816727e95471129237d46358ddc) | Day 1 documentation closed; ready for Gate B |
+| B — tasks | ⬜ NOT_STARTED | classification + NER + QA evidence | — | جاهز للبدء في Gate B |
 | C — search & truth | ⬜ NOT_STARTED | search metrics + slices + taxonomy | — | يأتي بعد مهام Gate B |
 | D — ship | ⬜ NOT_STARTED | project benchmark + API tests + canaries | — | يأتي بعد اكتمال التقييم والبحث |
 | E — submit | ⬜ NOT_STARTED | validator + demo + release tag | — | يأتي بعد اكتمال Gates A–D |
@@ -315,16 +315,19 @@ Gate A requirements are supported by reproducible Day 1 evidence.
 - اختبارات Day 1 كاملة: `10 passed in 0.16s`.
 - عدم إدخال بيانات شخصية حقيقية أو مفاتيح مصادقة أو أوزان نماذج إلى تجارب Day 1.
 
-### Remaining Day 1 documentation review
+### Day 1 documentation closure
 
-قبل الانتقال العملي إلى Gate B، تُراجع العناصر التوثيقية المحيطة بـ Day 1، ومنها:
+اكتملت مراجعة توثيق Day 1 وإغلاقها.
 
-- `README.md`
-- تقرير Day 1 إذا تقرر إدراجه ضمن أدلة التسليم
-- اتساق الروابط والـ commits النهائية
+تشمل أدلة الإغلاق الحالية:
 
-هذا لا يغيّر حالة الأدلة التقنية لـ Gate A، لكنه يرفع جودة التوثيق وقابلية المراجعة.
+- تحديث `README.md` بأدلة Gate A المقاسة.
+- إضافة التقرير `reports/day1_report.md`.
+- مراجعة اتساق الروابط والقياسات والـ commits.
+- التحقق من نجاح اختبارات Day 1: `10 passed in 0.16s`.
+- توثيق أدلة Core وDistinction.
 
+Gate A مغلق توثيقيًا وتقنيًا، والمشروع جاهز للانتقال إلى Gate B.
 ---
 
 ## Final release
