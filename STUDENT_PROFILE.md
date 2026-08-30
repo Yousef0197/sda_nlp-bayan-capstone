@@ -2,25 +2,23 @@
 
 استخدم المعلومات اللازمة للتقييم فقط. لا تضف رقم هوية أو هاتفًا أو عنوانًا أو token أو بيانات حساسة.
 
-- Display name | الاسم للعرض: FILL_ME
-- GitHub username: FILL_ME
-- Public repository: FILL_ME
-- Learning lane completed: Core / Explore / Distinction — FILL_ME
-- Starting level (self-described): beginner / intermediate / specialist — FILL_ME
+- Display name | الاسم للعرض: Yousef Al-Mutiri
+- GitHub username: Yousef0197
+- Public repository: https://github.com/Yousef0197/sda_nlp-bayan-capstone
+- Learning lane completed: In progress — target: Distinction
+- Starting level (self-described): intermediate
 
 ## My contribution | مساهمتي
 
-المشروع فردي. اشرح ما بنيته وما تعلمته، واذكر المساعدة أو المصادر وفق سياسة النزاهة.
-
-FILL_ME
+Work in progress. This section will be completed as the project is implemented and measured across the course labs.
 
 ## One skill I can now demonstrate
 
-FILL_ME: مهارة واحدة + رابط دليل داخل المستودع.
+In progress — evidence will be linked here after completing the relevant lab and tests.
 
 ## One limitation I understand
 
-FILL_ME
+In progress — a measured limitation will be documented after evaluating the implemented pipeline.
 
 ## Integrity declaration | إقرار النزاهة
 
@@ -29,5 +27,5 @@ FILL_ME
 - [ ] لم أستخدم بيانات شخصية أو أسرارًا.
 - [ ] لم أغيّر test labels أو validator للحصول على PASS.
 
-Signature/display name: FILL_ME  
-Date: FILL_ME
+Signature/display name: Pending final submission
+Date: Pending final submission
