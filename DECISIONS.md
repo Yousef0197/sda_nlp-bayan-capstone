@@ -1,52 +1,228 @@
 # DECISIONS — Bayan
 
-> انسخ القالب إلى `DECISIONS.md`. أضف قرارًا جديدًا لكل تغيير يؤثر في البيانات أو الجودة أو الخدمة.  
-> Copy to `DECISIONS.md`. Add one record for each material data, quality, or serving decision.
+يوثّق هذا الملف القرارات الهندسية التي تؤثر في البيانات، وجودة النماذج، والتقييم، وخدمة النظام.
+لا يُعتمد أي قرار جوهري اعتمادًا نهائيًا من غير قياس أو دليل قابل لإعادة التنفيذ.
 
-## Decision D-001 — FILL_ME
+---
 
-- **Date:** FILL_ME
-- **Gate:** A / B / C / D / E — FILL_ME
-- **Status:** proposed / accepted / rejected / superseded — FILL_ME
-- **Owner:** FILL_ME
+## Decision D-001 — Bilingual tokenizer and sequence length
+
+- **Date:** 2026-08-30
+- **Gate:** A
+- **Status:** accepted
+- **Owner:** Yousef Al-Mutiri
 
 ### Context | السياق
 
-FILL_ME: ما المشكلة أو القيد؟ ما الذي بقي ثابتًا؟
+يتطلب مشروع بيان معالجة نصوص تعليمية ثنائية اللغة بالعربية والإنجليزية؛ ولذلك لا يكفي اختيار المرمّز بناءً على أدائه في العربية وحدها أو الإنجليزية وحدها.
+
+أُجريت مقارنة بين:
+
+- `google-bert/bert-base-multilingual-cased` — mBERT
+- `aubmindlab/bert-base-arabertv02` — AraBERT
+
+وشملت المقارنة:
+
+- تجزئة كلمات عربية ذات لواصق.
+- خصوبة الترميز للعربية.
+- خصوبة الترميز للإنجليزية.
+- معدل القطع عند أطوال تسلسل مختلفة.
+- زمن الترميز على عينة عربية فصيحة.
+- فحصًا نوعيًا لتجزئة مفردات عربية فصيحة.
+
+بقيت النصوص المستخدمة في القياس ثابتة أثناء المقارنة بين المرمّزين.
 
 ### Options considered | البدائل
 
 | Option | Benefit | Cost/risk | Evidence |
 |---|---|---|---|
-| A | FILL_ME | FILL_ME | FILL_ME |
-| B | FILL_ME | FILL_ME | FILL_ME |
+| mBERT | يدعم العربية والإنجليزية ضمن مرمّز متعدد اللغات، وأظهر توازنًا أفضل في الاختبار الثنائي اللغة | خصوبته في العربية أعلى من AraBERT، مما يؤدي إلى تجزئة عربية أكثر | Arabic fertility = 3.756, English fertility = 1.500 |
+| AraBERT v0.2 | أكثر اقتصادًا في تجزئة النص العربي في العينة المقاسة | غير مناسب بوصفه المرمّز الوحيد لمسار ثنائي اللغة؛ إذ ارتفعت خصوبة الإنجليزية بشدة | Arabic fertility = 1.515, English fertility = 4.446 |
+
+### Measured evidence | الأدلة المقاسة
+
+#### 1. Arabic clitic probe
+
+اختُبرت اللصيقة المطلوبة:
+
+`الخدمة`
+
+باستخدام mBERT:
+
+`['ال', '##خدمة']`
+
+وعدد القطع:
+
+`2`
+
+أما:
+
+`وبالخدمة`
+
+فأنتجت:
+
+`['وب', '##ال', '##خدمة']`
+
+وعدد القطع:
+
+`3`
+
+أظهر الاختبار أن اتصال اللواصق العربية قد يغيّر بنية التجزئة، ولذلك لا ينبغي التعامل مع الكلمات العربية بوصفها وحدات ثابتة مستقلة عن السياق الصرفي.
+
+#### 2. Local WordPiece limitation
+
+أعاد المرمّز المحلي التعليمي `[UNK]` للكلمات العربية الفصيحة المختبرة، ومنها:
+
+- الخدمة
+- وبالخدمة
+- الاستيثاق
+- الاستقصاء
+- المساءلة
+- الاستدامة
+
+لا يُفسَّر انخفاض عدد القطع في هذه الحالة على أنه تفوق؛ لأن `[UNK]` يدل على عجز القاموس المحلي عن تمثيل الكلمة تفصيلًا.
+
+ولهذا استُخدم المرمّز المحلي لأغراض تعليمية وتوضيحية فقط، ولم يُعامل بوصفه مرشحًا نهائيًا لنظام بيان.
+
+#### 3. Arabic fusha comparison
+
+على عينة عربية فصيحة ثابتة:
+
+| Metric | mBERT | AraBERT |
+|---|---:|---:|
+| Mean fertility | 3.213 | 1.328 |
+| Truncation at max_length=16 | 100.0% | 50.0% |
+| Truncation at max_length=32 | 75.0% | 0.0% |
+| Mean tokenisation time | 0.2092 ms | 0.1628 ms |
+
+في المثال:
+
+`وبالاستيثاق من المعطيات تتعزز موثوقية الاستنتاج.`
+
+أنتج mBERT:
+
+`24` قطعة
+
+بينما أنتج AraBERT:
+
+`12` قطعة
+
+يبيّن ذلك أن AraBERT أكثر اقتصادًا في تمثيل العربية على هذه العينة، إلا أن هذا القياس وحده لا يثبت تفوقه في جودة المهمة النهائية.
+
+#### 4. Bilingual fertility
+
+على عينتين ثابتتين، عربية وإنجليزية:
+
+| Tokenizer | Arabic fertility | English fertility |
+|---|---:|---:|
+| mBERT | 3.756 | 1.500 |
+| AraBERT | 1.515 | 4.446 |
+
+أظهر AraBERT أفضلية واضحة في اقتصاد الترميز العربي، لكنه أظهر تجزئة مرتفعة جدًا للنص الإنجليزي.
+
+أما mBERT فكان أقل اقتصادًا في العربية، لكنه حافظ على تمثيل أكثر توازنًا بين اللغتين.
+
+#### 5. Bilingual truncation
+
+##### mBERT
+
+عند `max_length = 32`:
+
+- Arabic truncation: `0.0%`
+- English truncation: `0.0%`
+- Combined truncation: `0.0%`
+
+عند `max_length = 64`:
+
+- Arabic truncation: `0.0%`
+- English truncation: `0.0%`
+- Combined truncation: `0.0%`
+
+##### AraBERT
+
+عند `max_length = 32`:
+
+- Arabic truncation: `0.0%`
+- English truncation: `75.0%`
+- Combined truncation: `37.5%`
+
+عند `max_length = 64`:
+
+- Arabic truncation: `0.0%`
+- English truncation: `0.0%`
+- Combined truncation: `0.0%`
+
+#### 6. Three-seed embedding experiment
+
+أُعيد إنشاء جدول embedding تعليمي باستخدام ثلاث بذور:
+
+- `7`
+- `42`
+- `2026`
+
+في جميع التشغيلات بقي شكل المخرجات:
+
+`(2, 12, 8)`
+
+ثابتًا.
+
+كما بقيت Token IDs وبنية المدخلات ثابتتين، بينما تغيرت القيم العددية للـ embeddings نتيجة تغير التهيئة العشوائية.
+
+يدل ذلك على أن البذرة تؤثر في القيم العشوائية الابتدائية، لكنها لا تغيّر هوية الرموز أو أبعاد بنية البيانات.
+
+#### 7. Automated tests
+
+شُغّلت اختبارات Lab 1 الرسمية محليًا باستخدام:
+
+`tests/test_day1_preprocessing.py`
+
+و:
+
+`tests/test_day1_tokenization.py`
+
+وكانت النتيجة:
+
+`6 passed in 0.42s`
 
 ### Decision | القرار
 
-FILL_ME
+يُعتمد `mBERT` بوصفه المرمّز المبدئي للمسار الثنائي اللغة في بيان.
 
-### Evidence | الدليل
+السبب الرئيس ليس تفوقه المطلق في جميع المقاييس، وإنما قدرته على توفير توازن أفضل بين العربية والإنجليزية مقارنةً بـ AraBERT في العينة المقاسة.
 
-- Report/test/commit: FILL_ME
-- Metric and result label: FILL_ME
-- Slice or failure considered: FILL_ME
+يُعتمد مبدئيًا:
+
+`max_length = 64`
+
+وذلك لإتاحة هامش أكبر للنصوص التعليمية الأطول مع استمرار دعم اللغتين.
+
+أظهرت العينة الحالية أن `max_length = 32` كان كافيًا أيضًا لـ mBERT بمعدل قطع بلغ `0.0%`، ولذلك لا يُعد اختيار `64` إثباتًا على أن `32` غير كافٍ. سيُعاد قياس طول التسلسل بعد تجميد مجموعة بيانات المشروع الكاملة.
+
+### Known limitations | القيود المعروفة
+
+1. قياسات الخصوبة والقطع الحالية مأخوذة من عينة تعليمية صغيرة، وليست من مجموعة التقييم النهائية للمشروع.
+2. انخفاض الخصوبة لا يثبت وحده ارتفاع جودة النموذج في مهام التصنيف أو NER أو QA أو البحث الدلالي.
+3. زمن الترميز المقاس لا يمثل benchmark نهائيًا للخدمة؛ إذ لم يُقَس بعد تحت حمل متزامن أو وفق بروتوكول الأداء النهائي.
+4. AraBERT أظهر كفاءة أعلى بوضوح في العربية، ولذلك قد يبقى خيارًا صالحًا لتجارب عربية متخصصة إذا أُنشئ لاحقًا مسار مستقل للعربية.
+5. يجب أن يأتي tokenizer والنموذج المستخدمان فعليًا في التدريب والاستدلال من checkpoint متوافق واحد.
+6. سيُعاد فحص قرار `max_length` على مجموعة البيانات المجمدة قبل التدريب النهائي.
 
 ### Consequences and rollback | الأثر والرجوع
 
-- Positive consequence: FILL_ME
-- Limitation/new risk: FILL_ME
-- Rollback trigger: FILL_ME
-- Rollback path: FILL_ME
+- **Positive consequence:** استخدام مرمّز واحد قادر على معالجة العربية والإنجليزية ضمن المسار الموحد.
+- **Limitation/new risk:** تجزئة mBERT للنص العربي أعلى من AraBERT، وقد تؤدي إلى تسلسلات أطول وكلفة حسابية أكبر.
+- **Rollback trigger:** ظهور انخفاض واضح في جودة المهام العربية، أو ارتفاع غير مقبول في معدل القطع أو الكلفة بعد التقييم على مجموعة البيانات المجمدة.
+- **Rollback path:** إعادة المقارنة بقياس جودة المهمة الفعلية، ودراسة مرمّز متعدد اللغات بديل أو مسار عربي متخصص إذا أثبتت القياسات جدواه.
 
 ---
 
-## قرارات إلزامية قبل Gate E
+## Mandatory decisions before Gate E | القرارات الإلزامية قبل البوابة E
 
-- [ ] tokenizer + max length.
-- [ ] Arabic preprocessing profile.
-- [ ] task model/baseline and split.
-- [ ] semantic encoder/index/k/threshold.
-- [ ] metric/slices/error priorities.
-- [ ] performance budget.
-- [ ] ONNX/INT8 adopt or reject.
-- [ ] served artefact + preprocessing/label versions.
+- [x] Tokenizer + initial maximum sequence length.
+- [ ] Arabic preprocessing profile — سيُعتمد بعد استكمال قياسات أثر التطبيع.
+- [ ] Task model, baseline, and frozen split — سيُحسم عند مرحلة النمذجة.
+- [ ] Semantic encoder, index, k, and threshold — سيُحسم عند مرحلة البحث الدلالي.
+- [ ] Metrics, slices, and error priorities — سيُستكمل مع خطة التقييم.
+- [ ] Performance budget — سيُحسم قبل benchmark الخدمة.
+- [ ] ONNX/INT8 adopt or reject — سيُحسم بعد قياس الجودة والأداء قبل وبعد التحويل.
+- [ ] Served artefact and preprocessing/label versions — سيُثبت قبل الإصدار النهائي.
