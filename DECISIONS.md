@@ -5,7 +5,9 @@
 
 ---
 
-## Decision D-001 — Bilingual tokenizer and sequence length
+## Day 1 — Tokenizer decision
+
+### Decision D-001 — Bilingual tokenizer and sequence length
 
 - **Date:** 2026-08-30
 - **Gate:** A
