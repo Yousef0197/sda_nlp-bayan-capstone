@@ -1,7 +1,7 @@
 # STUDENT PROFILE | ملف المتدرب
 
 
-- Display name | الاسم للعرض: Yousef Al-Mutiri
+- Display name : Yousef Al-Mutiri
 - GitHub username: Yousef0197
 - Public repository: https://github.com/Yousef0197/sda_nlp-bayan-capstone
 - Learning lane completed: In progress — target: Distinction
