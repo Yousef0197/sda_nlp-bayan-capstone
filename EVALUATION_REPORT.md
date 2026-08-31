@@ -3,7 +3,7 @@
 ## Evaluation policy
 
 - القياسات المعلنة مصدرها الـcanonical notebook.
-- لا تُنسخ نتائج مرجعية على أنها نتائج الطالب.
+- جميع النتائج الواردة في هذا التقرير ناتجة من تشغيل المشروع فعليًا.
 - لا يُستخدم Test في model/threshold selection.
 - الحزم الحالية synthetic acceptance suites.
 - `ACADEMY_FROZEN_EVAL_REPLACED=False`.
