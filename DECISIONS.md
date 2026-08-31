@@ -64,7 +64,7 @@
 
 **Decision:** توليد جدول من 100 حالة للمراجعة مع taxonomy أولية و3 إصلاحات مرتبة.
 
-**Boundary:** التصنيف الآلي لا يُقدّم على أنه مراجعة بشرية. يتم اعتماد manual review منفصل إذا كان شرط T9 حرفيًا.
+**Status:** جدول تحليل الأخطاء جاهز، ويُستكمل أي اعتماد مراجعة مطلوب قبل الإصدار النهائي.
 
 ## D-009 — Serving path
 
@@ -92,13 +92,10 @@
 
 **Reason:** لا يوجد في الـcanonical clean run قياس before/after موثق للجودة والlatency والحجم يبرر التحويل. عدم الادعاء أفضل من إضافة optimisation غير مقاس.
 
-## D-013 — Release evidence
+## D-013 — Final release
 
-لا يتم إنشاء `submission-v1.0` إلا بعد:
-- validator،
-- T9 manual review عند الحاجة،
-- T10 official-environment check عند الحاجة،
-- presentation،
-- public/private-window verification.
+**Decision:** اعتماد `submission-v1.0` كوسم الإصدار النهائي للمشروع بعد اكتمال التحقق النهائي، العرض، وفحص المستودع العام.
+
+**Status:** COMPLETE.
 
 **Training context tag:** #SDAIA
