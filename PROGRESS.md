@@ -12,7 +12,7 @@
 |---|---|---|---|
 | Gate A — ingest | ✅ COMPLETE | preprocessing, PII masking, tokenizer, embeddings, attention | — |
 | Gate B — tasks | ✅ IMPLEMENTED / MEASURED_SMOKE | classification, sentiment, NER, QA; notebook thresholds pass | frozen/academy evaluation if separately required |
-| Gate C — search & truth | 🟨 READY FOR FINAL REVIEW | FAISS, Recall/MRR, slices, CIs, invariance, MFT, 100-case table | human review sign-off for T9 if required |
+| Gate C — search & truth | 🟨 READY FOR FINAL REVIEW | FAISS, Recall/MRR, slices, CIs, invariance, MFT, 100-case table | final T9 review confirmation if required |
 | Gate D — ship | 🟨 READY FOR ENV CHECK | FastAPI, parity, benchmark, measured extension | repeat T10 on official lab CPU if required |
 | Gate E — submit | ⬜ PENDING | canonical clean-run notebook exists | validator, presentation, private-window check, final tag |
 
@@ -52,7 +52,7 @@
 
 ## Submission blockers
 
-- [ ] T9 human review confirmation if required.
+- [ ] T9 final review confirmation if required.
 - [ ] T10 official lab CPU verification if required.
 - [ ] Final validator.
 - [ ] Presentation.
