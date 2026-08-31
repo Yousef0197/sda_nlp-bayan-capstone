@@ -1,63 +1,66 @@
-# DATA CARD — Bayan
+# DATA_CARD — Bayan
 
-## Dataset identity
+## Purpose
 
-- Name/version: FILL_ME
-- Source/creator: FILL_ME
-- License/permission: FILL_ME
-- Data hash or immutable revision: FILL_ME
-- Intended educational task: FILL_ME
+بيانات تعليمية مصممة لاختبار مسار NLP ثنائي اللغة دون استخدام بيانات شخصية حقيقية أو بيانات حساسة.
 
-## Composition
+## Data type
 
-| Split | Rows | Arabic | English | Groups | Notes |
-|---|---:|---:|---:|---:|---|
-| train | FILL_ME | FILL_ME | FILL_ME | FILL_ME | FILL_ME |
-| validation | FILL_ME | FILL_ME | FILL_ME | FILL_ME | FILL_ME |
-| frozen test | FILL_ME | FILL_ME | FILL_ME | FILL_ME | opened once after freeze |
+`Synthetic educational data`
 
-## Fields and labels
+أي أن النصوص والأسماء وأمثلة الهاتف والبريد صُنعت لأغراض التدريب والاختبار.
 
-| Field/label | Meaning | Allowed values | Missing-value rule |
-|---|---|---|---|
-| FILL_ME | FILL_ME | FILL_ME | FILL_ME |
+## Languages
 
-## Collection/generation
+- Arabic
+- English
 
-FILL_ME: كيف أنشئت أو جُمعت الأمثلة؟ ما الذي يجعلها اصطناعية/عامة؟ من راجعها؟
+## Covered tasks
 
-## Cleaning and preprocessing
+- preprocessing / PII masking
+- topic classification
+- sentiment classification
+- NER
+- extractive QA
+- semantic retrieval
+- behavioural evaluation
+- API canaries
 
-- Display copy rule: FILL_ME
-- PII masking rule: FILL_ME
-- Arabic profile/version: FILL_ME
-- Deduplication/grouping: FILL_ME
-- Filtering/exclusions: FILL_ME
+## Privacy
 
-## Split and leakage controls
+لا تحتوي الحزم المقصودة على:
+- بيانات مستفيدين فعلية،
+- بيانات حكومية سرية،
+- أسرار أو API keys.
 
-- Split method/seed: FILL_ME
-- Group isolation evidence: FILL_ME
-- Near-duplicate audit: FILL_ME
-- Frozen-test access date and commit: FILL_ME
+القيم التي تشبه الهاتف والبريد أمثلة اختبارية فقط.
 
-## Known gaps and risks
+## Splits
 
-- Dialects/Arabizi: FILL_ME
-- Class balance: FILL_ME
-- Synthetic-to-real gap: FILL_ME
-- Annotation ambiguity: FILL_ME
-- Small slices/uncertainty: FILL_ME
-- Misuse/privacy risk: FILL_ME
+حيث تُستخدم splits، يتم الفصل بين Train / Validation / Test، ويُصرَّح في الدفتر:
 
-## Permitted and prohibited use
+`TEST_USED_FOR_SELECTION=False`
 
-- Permitted educational use: FILL_ME
-- Prohibited/high-risk use: FILL_ME
-- Human review: FILL_ME
+## Known limitations
 
-## Maintenance
+1. البيانات صغيرة ومصممة لغرض تعليمي.
+2. بعض acceptance suites سهلة نسبيًا ومحددة البنية.
+3. الأداء عليها قد يكون أعلى بكثير من بيانات واقعية غير مرئية.
+4. لا يمكن استخدام هذه الأرقام لتقدير production accuracy.
+5. لا تستبدل أي Frozen Evaluation رسمي للأكاديمية.
 
-- Owner/contact through GitHub: FILL_ME
-- Change/version policy: FILL_ME
-- Index/model rebuild triggers: FILL_ME
+## Recommended use
+
+- التعليم.
+- smoke testing.
+- pipeline validation.
+- reproducibility demonstrations.
+
+## Inappropriate use
+
+- اتخاذ قرارات عالية الأثر.
+- تقييم أشخاص حقيقيين.
+- الادعاء بجهوزية إنتاجية.
+- الادعاء بأن نتائج synthetic data تمثل السكان أو المستخدمين الحقيقيين.
+
+**Context:** Bayan — #SDAIA
