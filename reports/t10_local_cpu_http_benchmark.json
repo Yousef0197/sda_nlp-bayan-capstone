@@ -1,0 +1,23 @@
+{
+  "test": "T10 local CPU real HTTP benchmark",
+  "date": "2026-08-31T20:44:57",
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 142 Stepping 11, GenuineIntel",
+    "cpu_count": 8,
+    "python": "3.13.14",
+    "accelerator": "CPU"
+  },
+  "http": {
+    "server": "uvicorn separate process localhost",
+    "concurrency": 16,
+    "warmup_requests": 32,
+    "measured_requests": 128,
+    "p50_ms": 19.172349999280414,
+    "p95_ms": 24.804644999676373,
+    "p99_ms": 27.90292200159456,
+    "mean_ms": 18.3400914061167,
+    "threshold_ms": 40.0,
+    "target_met": true
+  }
+}

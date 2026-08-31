@@ -1,0 +1,21 @@
+﻿query_id,lang,query,relevant,baseline_top1,improved_top1,baseline_error,improved_error,category,manual_category,manual_reviewed
+Q01-0,ar,كيف يمكن تجديد التصريح؟ فضلا,D01,D11,D01,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
+Q03-0,ar,اين اجد جدول مواعيد الحافلة؟ فضلا,D03,D14,D03,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q05-0,ar,كيف اعيد تعيين كلمة المرور؟ فضلا,D05,D15,D05,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q07-0,ar,كيف يمكن تحميل الشهادة؟ فضلا,D07,D17,D07,True,False,cross_language_lexical_gap,normalization_drift,True
+Q09-0,ar,كيف اقدم طلب المنحة؟ فضلا,D09,D19,D09,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
+Q01-1,ar,كيف يمكن تجديد التصريح؟ لو سمحت,D01,D11,D01,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q03-1,ar,اين اجد جدول مواعيد الحافلة؟ لو سمحت,D03,D14,D03,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q05-1,ar,كيف اعيد تعيين كلمة المرور؟ لو سمحت,D05,D15,D05,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q07-1,ar,كيف يمكن تحميل الشهادة؟ لو سمحت,D07,D17,D07,True,False,cross_language_lexical_gap,normalization_drift,True
+Q09-1,ar,كيف اقدم طلب المنحة؟ لو سمحت,D09,D19,D09,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q02-0,en,How do I book a clinic appointment? please,D02,D19,D02,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
+Q04-0,en,How can I track my complaint? please,D04,D14,D04,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q06-0,en,How can I pay the invoice? please,D06,D16,D06,True,False,cross_language_lexical_gap,normalization_drift,True
+Q10-0,en,How do I register for the course? please,D10,D05,D10,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q02-1,en,How do I book a clinic appointment? today,D02,D19,D02,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
+Q04-1,en,How can I track my complaint? today,D04,D14,D04,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q06-1,en,How can I pay the invoice? today,D06,D08,D06,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q10-1,en,How do I register for the course? today,D10,D05,D10,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
+Q02-2,en,How do I book a clinic appointment? now,D02,D19,D02,True,False,cross_language_lexical_gap,candidate_ordering,True
+Q04-2,en,How can I track my complaint? now,D04,D14,D04,True,False,cross_language_lexical_gap,candidate_ordering,True
