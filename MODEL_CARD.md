@@ -1,57 +1,85 @@
-# بطاقة نموذج بيان | Bayan Model Card
+# MODEL_CARD — Bayan
 
-> انسخها باسم `MODEL_CARD.md` وكرر الأقسام التالية لكل artefact (topic، sentiment، NER، QA، embeddings/reranker). يجوز فصلها إلى ملفات متعددة بشرط أن يربط بها `MODEL_CARD.md`. لا تُدمج مقاييس checkpoints مختلفة في صف واحد.
+## System overview
 
-## Model details
+Bayan ليس نموذجًا واحدًا فقط، بل pipeline ثنائي اللغة يجمع preprocessing، Transformer task paths، NER، QA، retrieval، evaluation وخدمة API.
 
-- Name/version: `TODO`
-- Base checkpoint: `TODO`
-- Task: `TODO`
-- License/source: `TODO`
-- Commit SHA: `TODO`
-- Owner/contact role: `TODO — لا تضع بيانات شخصية غير لازمة`
+## Core Transformer
+
+`distilbert/distilbert-base-multilingual-cased`
+
+يُستخدم في المختبرات التعليمية لإثبات مسارات Transformer الفعلية.
+
+## Task components
+
+### Topic / Sentiment
+
+- Baseline: TF-IDF.
+- Transformer training path.
+- Measured smoke deltas:
+  - Topic `+0.858`
+  - Sentiment `+0.663`
+
+### NER
+
+- subword alignment عبر `word_ids()`.
+- `-100` للمواضع غير الداخلة في loss.
+- entity-level F1 measured smoke: `1.000`.
+- train-only lexical postprocessor في acceptance suite.
+
+### Extractive QA
+
+- start/end spans.
+- null/no-answer decision.
+- measured smoke: `20/20`.
+
+### Semantic search
+
+- deterministic embeddings for educational suite.
+- FAISS `IndexFlatIP`.
+- bilingual canonicalization.
+- reranking.
+- Recall@10 `1.000`.
+- MRR@10 `1.000`.
+
+## Serving
+
+FastAPI:
+- `GET /health`
+- `POST /v1/classify`
+
+Canaries:
+- Arabic.
+- English.
+- invalid input.
+- PII masking.
 
 ## Intended use
 
-- الاستخدام المقصود: `TODO`
-- المستخدمون المقصودون: `TODO`
-- خارج النطاق: `TODO`
+تعليمي وتطبيقي لإظهار تصميم pipeline واختبارها وقياسها.
 
-## Data and preprocessing
+## Not intended for
 
-- Dataset ID/version: `TODO`
-- Languages/variants: `TODO`
-- Split strategy: `TODO`
-- PII policy: `TODO`
-- Preprocessing profile/version/backend: `TODO`
-- Tokenizer/embedding model: `TODO`
+- production deployment without further evaluation.
+- government decision automation.
+- safety-critical decisions.
+- profiling real individuals.
 
-## Evaluation
+## Limitations
 
-| metric/slice | n | result | uncertainty | evidence file |
-|---|---:|---:|---|---|
-| `TODO` | `TODO` | `TODO` | `TODO` | `TODO` |
+- synthetic/small acceptance suites.
+- results may not generalize.
+- academy frozen evaluation is not replaced.
+- T10 Colab ASGI result must not be misrepresented as official lab-CPU result if the rubric fixes that environment.
 
-## Behavioural checks
+## Responsible claims
 
-| capability | pass rate | known failure |
-|---|---:|---|
-| `TODO` | `TODO` | `TODO` |
+Allowed:
+- "The canonical notebook completed its measured smoke suites."
+- "The measured synthetic acceptance suite achieved the reported values."
 
-## Limitations and risks
+Not allowed:
+- "The system is 100% accurate in production."
+- "The academy frozen benchmark achieved these values" unless actually run.
 
-1. `TODO`
-2. `TODO`
-3. `TODO`
-
-## Ethical and privacy notes
-
-- `TODO: synthetic/public data only; masking scope; no production claim.`
-
-## Reproduction
-
-1. افتح notebook: `TODO`.
-2. استخدم runtime/device: `TODO`.
-3. ثبت النسخ: `TODO`.
-4. شغّل Run all من commit: `TODO`.
-5. قارن النتيجة مع: `TODO`.
+**Context tag:** #SDAIA
