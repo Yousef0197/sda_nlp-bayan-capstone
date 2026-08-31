@@ -1,84 +1,86 @@
-# تقرير تقييم بيان | Bayan Evaluation Report
+# EVALUATION_REPORT — Bayan
 
-> انسخ هذا الملف إلى جذر مستودعك باسم `EVALUATION_REPORT.md`، ثم احذف التعليمات بين الأقواس واستبدل كل `TODO` بدليلك الفعلي.
+## Evaluation policy
 
-## 1. نطاق التقرير
+- القياسات المعلنة مصدرها الـcanonical notebook.
+- لا تُنسخ نتائج مرجعية على أنها نتائج الطالب.
+- لا يُستخدم Test في model/threshold selection.
+- الحزم الحالية synthetic acceptance suites.
+- `ACADEMY_FROZEN_EVAL_REPLACED=False`.
 
-- تاريخ التشغيل: `TODO`
-- commit SHA: `TODO`
-- runtime/device: `TODO`
-- data version/hash: `TODO`
-- preprocessing profile/version/backend: `TODO`
-- model/checkpoint IDs: `TODO`
-- نوع الأرقام: `MEASURED_SMOKE / MEASURED / COURSE_FIXTURE` — اختر بدقة.
+## Results
 
-## 2. العقود قبل القياس
+| Test | Result | Threshold represented in notebook |
+|---|---:|---:|
+| Topic delta vs baseline | `+0.858` | ≥ `+0.08` |
+| Sentiment delta vs baseline | `+0.663` | ≥ `+0.08` |
+| NER entity-F1 | `1.000` | ≥ `0.80` |
+| QA no-answer | `20/20` | ≥ `17/20` |
+| Recall@10 | `1.000` | ≥ `0.80` |
+| MRR@10 | `1.000` | ≥ `0.70` |
+| Invariance | `1.000` | ≥ `0.95` |
+| MFT | `1.000` | ≥ `0.90` |
+| HTTP p99 | `32.907 ms` | ≤ `40 ms` |
+| Extension delta | `+0.88` | positive before/after |
 
-| العقد | الدليل | الحالة |
-|---|---|---|
-| لا PII حقيقية | `TODO` | PASS/PENDING |
-| train/validation/test بلا leakage | `TODO` | PASS/PENDING |
-| tokenizer/model متطابقان | `TODO` | PASS/PENDING |
-| Arabic profile متطابقة في train/index/query/serve | `TODO` | PASS/PENDING |
-| corpus/query embeddings مطبعة L2 | `TODO` | PASS/PENDING |
-| frozen test لم يستخدم في tuning | `TODO` | PASS/PENDING |
+## Slices
 
-## 3. نتائج المهام
+البحث الدلالي يحسب شرائح بحسب اللغة:
+- Arabic.
+- English.
 
-| المهمة | المقياس الرئيس | النتيجة | CI/تكرار | مجموعة القياس |
-|---|---|---:|---|---|
-| Classification | Macro-F1 | `TODO` | `TODO` | `TODO` |
-| NER | strict entity F1 | `TODO` | `TODO` | `TODO` |
-| QA | EM/F1 + no-answer | `TODO` | `TODO` | `TODO` |
-| Retrieval | Recall@k / MRR@k | `TODO` | `TODO` | `TODO` |
+ويحسب bootstrap confidence intervals داخل مسار Day 3.
 
-## 4. شرائح التقييم
+## Behavioural tests
 
-| المهمة | الشريحة | n | metric | 95% CI | التحذير/التفسير |
-|---|---|---:|---:|---|---|
-| `TODO` | `language=ar` | `TODO` | `TODO` | `TODO` | `TODO` |
-| `TODO` | `language=en` | `TODO` | `TODO` | `TODO` | `TODO` |
-| `TODO` | `variant=Gulf` | `TODO` | `TODO` | `TODO` | `TODO` |
-| `TODO` | `length=long` | `TODO` | `TODO` | `TODO` | `TODO` |
+### Invariance
 
-## 5. مقارنة الإصدارات
+يتحقق من ثبات نتيجة البحث تحت تغييرات مثل:
+- المسافات.
+- علامات الترقيم.
+- التشكيل.
+- normalization variants.
 
-- Model A: `TODO`
-- Model B: `TODO`
-- observed difference B−A: `TODO`
-- paired 95% CI: `TODO`
-- القرار المهني: `TODO — هل تدعم CI ادعاءً اتجاهيًا؟ وهل الفرق مهم عمليًا؟`
+Measured: `1.000`.
 
-## 6. Behavioural tests
+### MFT
 
-| النوع | passed/total | pass rate | فشل مهم |
-|---|---:|---:|---|
-| invariance | `TODO` | `TODO` | `TODO` |
-| directional | `TODO` | `TODO` | `TODO` |
-| minimum functionality | `TODO` | `TODO` | `TODO` |
+يغطي minimum functionality مثل:
+- email masking.
+- phone masking.
+- Arabic normalization.
+- retrieval expectations.
 
-## 7. تحليل الأخطاء
+Measured: `1.000`.
 
-- المصدر: validation + behavioural failures فقط.
-- عدد الأخطاء المقروءة يدويًا: `TODO`
-- رابط worksheet داخل المستودع: `TODO`
+## Error analysis
 
-| taxonomy tag | count | مثال آمن مختصر | الفرضية |
-|---|---:|---|---|
-| `TODO` | `TODO` | `TODO` | `TODO` |
+تم تجهيز `100` حالة من baseline مقابل improved retrieval مع:
+- automatic error flag.
+- language.
+- expected document.
+- baseline top-1.
+- improved top-1.
+- taxonomy أولية.
 
-## 8. الإصلاحات الثلاثة ذات الأولوية
+الإصلاحات المرتبة:
+1. bilingual concept canonicalization.
+2. FAISS + reranking.
+3. unified train/eval/serve Arabic profile.
 
-| الأولوية | الدليل | الإجراء | metric/slice المتوقع | الكلفة | اختبار عدم الرجوع |
-|---:|---|---|---|---|---|
-| 1 | `TODO` | `TODO` | `TODO` | `TODO` | `TODO` |
-| 2 | `TODO` | `TODO` | `TODO` | `TODO` | `TODO` |
-| 3 | `TODO` | `TODO` | `TODO` | `TODO` | `TODO` |
+### Human-review boundary
 
-## 9. ما الذي لا تثبته النتائج؟
+لا يُقدَّم التصنيف الآلي على أنه مراجعة بشرية. إذا كان T9 يتطلب "قراءة وتصنيف" يدويًا، يجب توثيق human sign-off قبل Gate E.
 
-- `TODO: حجم العينة/التمثيل/بيئة التشغيل/الزمن/المجالات غير المغطاة.`
+## Interpretation
 
-## 10. خلاصة للإدارة
+الأرقام المرتفعة لا تعني 100% production accuracy، لأنها ناتجة من synthetic educational suites.
 
-`TODO: فقرتان فقط — ما الذي يعمل، أين الضعف، وما القرار التالي المدعوم بالدليل.`
+## Remaining validation
+
+- official frozen evaluation إذا كانت منفصلة.
+- official lab CPU benchmark إذا كان مطلوبًا حرفيًا.
+- submission validator.
+- release tag.
+
+**Training context:** #SDAIA
