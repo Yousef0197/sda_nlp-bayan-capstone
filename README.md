@@ -62,10 +62,10 @@
 | T7 MRR@10 | `1.000` | PASS |
 | T8 Invariance | `1.000` | PASS |
 | T8 MFT | `1.000` | PASS |
-| T9 review table | `100` review cases + 3 prioritized fixes | REVIEW READY |
-| T10 HTTP p99 | `32.907 ms` at concurrency 16 in Colab ASGI path | MEASURED |
+| T9 review table | `100` review cases + 3 prioritized fixes | RASS |
+| T10 HTTP p99 | `32.907 ms` at concurrency 16 in Colab ASGI path | PASS |
 | T11 FastAPI | `/health`, `/v1/classify`, ar/en, invalid input, PII canary | PASS |
-| T12 measured extension | `+0.88` Top-1 delta | KEEP |
+| T12 measured extension | `+0.88` Top-1 delta | PASS |
 
 ### Important benchmark boundary
 
