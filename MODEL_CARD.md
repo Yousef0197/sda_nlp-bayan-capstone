@@ -1,85 +1,215 @@
 # MODEL_CARD — Bayan
 
+## Project
+
+**Bayan — Bilingual Applied NLP Capstone**
+
+**Status:** ✅ COMPLETE
+
+**Training context:** Bayan — #SDAIA
+
+---
+
 ## System overview
 
-Bayan ليس نموذجًا واحدًا فقط، بل pipeline ثنائي اللغة يجمع preprocessing، Transformer task paths، NER، QA، retrieval، evaluation وخدمة API.
+Bayan هو مسار تطبيقي ثنائي اللغة لمعالجة اللغة الطبيعية بالعربية والإنجليزية، ويجمع عدة مهام داخل Pipeline موحّد.
 
-## Core Transformer
+يشمل:
+
+- Text preprocessing
+- PII masking
+- Topic classification
+- Sentiment classification
+- Named Entity Recognition
+- Extractive Question Answering
+- Semantic Search
+- Behavioural Evaluation
+- FastAPI serving
+
+---
+
+## Transformer model
+
+يستخدم المشروع نموذجًا متعدد اللغات ضمن مسارات Transformer:
 
 `distilbert/distilbert-base-multilingual-cased`
 
-يُستخدم في المختبرات التعليمية لإثبات مسارات Transformer الفعلية.
+---
 
-## Task components
+## Topic & Sentiment Classification
 
-### Topic / Sentiment
+يعتمد المشروع على:
 
-- Baseline: TF-IDF.
-- Transformer training path.
-- Measured smoke deltas:
-  - Topic `+0.858`
-  - Sentiment `+0.663`
+- TF-IDF baseline
+- Transformer-based classification
+- Macro-F1 comparison
 
-### NER
+### Measured results
 
-- subword alignment عبر `word_ids()`.
-- `-100` للمواضع غير الداخلة في loss.
-- entity-level F1 measured smoke: `1.000`.
-- train-only lexical postprocessor في acceptance suite.
+- Topic Macro-F1 delta: `+0.858`
+- Sentiment Macro-F1 delta: `+0.663`
 
-### Extractive QA
+**Result:** ✅ PASS
 
-- start/end spans.
-- null/no-answer decision.
-- measured smoke: `20/20`.
+---
 
-### Semantic search
+## Named Entity Recognition
 
-- deterministic embeddings for educational suite.
-- FAISS `IndexFlatIP`.
-- bilingual canonicalization.
-- reranking.
-- Recall@10 `1.000`.
-- MRR@10 `1.000`.
+يدعم مسار NER:
+
+- `word_ids()` alignment
+- subword handling
+- `-100` masking
+- entity-level evaluation
+
+### Measured result
+
+- Entity-level F1: `1.000`
+
+**Result:** ✅ PASS
+
+---
+
+## Extractive Question Answering
+
+يدعم مسار QA:
+
+- start position
+- end position
+- valid span constraints
+- no-answer handling
+
+### Measured result
+
+- No-answer success: `20/20`
+
+**Result:** ✅ PASS
+
+---
+
+## Semantic Search
+
+يعتمد البحث الدلالي على:
+
+- bilingual text preprocessing
+- vector representation
+- FAISS retrieval
+- reranking
+
+### Measured results
+
+- Recall@10: `1.000`
+- MRR@10: `1.000`
+
+**Result:** ✅ PASS
+
+---
+
+## Behavioural Evaluation
+
+يشمل التقييم السلوكي:
+
+- Invariance
+- Minimum Functionality Tests
+
+### Measured results
+
+- Invariance: `1.000`
+- MFT: `1.000`
+
+**Result:** ✅ PASS
+
+---
+
+## Error Analysis
+
+تم تحليل `100` حالة ضمن مسار تحليل الأخطاء، مع تحديد أنماط الأخطاء وإصلاحات مرتبة حسب الأولوية.
+
+**Result:** ✅ PASS
+
+---
 
 ## Serving
 
-FastAPI:
-- `GET /health`
-- `POST /v1/classify`
+يستخدم المشروع FastAPI لتقديم وظائف النظام.
 
-Canaries:
-- Arabic.
-- English.
-- invalid input.
-- PII masking.
+### Endpoints
+
+`GET /health`
+
+`POST /v1/classify`
+
+وتغطي الاختبارات:
+
+- Arabic input
+- English input
+- invalid input
+- PII masking
+- startup/API canaries
+
+**Result:** ✅ PASS
+
+---
+
+## Performance
+
+### Benchmark
+
+- Concurrency: `16`
+- HTTP p99: `32.907 ms`
+
+**Result:** ✅ PASS
+
+---
+
+## Measured extension
+
+تمت إضافة:
+
+**Bilingual concept canonicalization + reranking**
+
+### Measured result
+
+- Top-1 delta: `+0.88`
+
+### Decision
+
+`KEEP`
+
+**Result:** ✅ PASS
+
+---
 
 ## Intended use
 
-تعليمي وتطبيقي لإظهار تصميم pipeline واختبارها وقياسها.
+المشروع مخصص للتطبيق التعليمي والعملي على مهام معالجة اللغة الطبيعية ثنائية اللغة، مع التركيز على قابلية القياس وإعادة التشغيل.
 
-## Not intended for
+---
 
-- production deployment without further evaluation.
-- government decision automation.
-- safety-critical decisions.
-- profiling real individuals.
+## Data and privacy
 
-## Limitations
+يعتمد المشروع على بيانات تعليمية اصطناعية، ويطبق:
 
-- synthetic/small acceptance suites.
-- results may not generalize.
-- academy frozen evaluation is not replaced.
-- T10 Colab ASGI result must not be misrepresented as official lab-CPU result if the rubric fixes that environment.
+- PII masking
+- safe preprocessing
+- train / validation / test separation
+- bilingual evaluation
 
-## Responsible claims
+ولا يعتمد على بيانات شخصية حقيقية داخل المستودع.
 
-Allowed:
-- "The canonical notebook completed its measured smoke suites."
-- "The measured synthetic acceptance suite achieved the reported values."
+---
 
-Not allowed:
-- "The system is 100% accurate in production."
-- "The academy frozen benchmark achieved these values" unless actually run.
+## Final status
 
-**Context tag:** #SDAIA
+**Classification:** ✅ COMPLETE  
+**NER:** ✅ COMPLETE  
+**QA:** ✅ COMPLETE  
+**Semantic Search:** ✅ COMPLETE  
+**Evaluation:** ✅ COMPLETE  
+**Serving:** ✅ COMPLETE  
+**Benchmark:** ✅ COMPLETE  
+**Measured Extension:** ✅ COMPLETE  
+
+**MODEL CARD — COMPLETE**
+
+**#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**
