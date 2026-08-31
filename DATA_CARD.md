@@ -1,66 +1,131 @@
 # DATA_CARD — Bayan
 
-## Purpose
+## Project
 
-بيانات تعليمية مصممة لاختبار مسار NLP ثنائي اللغة دون استخدام بيانات شخصية حقيقية أو بيانات حساسة.
+**Bayan — Bilingual Applied NLP Capstone**
+
+**Status:** ✅ COMPLETE
+
+**Training context:** Bayan — #SDAIA
+
+---
+
+## Data purpose
+
+تُستخدم البيانات في المشروع لتطوير واختبار مهام معالجة اللغة الطبيعية ثنائية اللغة بالعربية والإنجليزية.
+
+تشمل المهام:
+
+- Text preprocessing
+- PII masking
+- Topic classification
+- Sentiment classification
+- Named Entity Recognition
+- Extractive Question Answering
+- Semantic Search
+- Behavioural Evaluation
+
+---
 
 ## Data type
 
-`Synthetic educational data`
+البيانات المستخدمة في المشروع هي:
 
-أي أن النصوص والأسماء وأمثلة الهاتف والبريد صُنعت لأغراض التدريب والاختبار.
+**Synthetic Educational Data**
+
+وهي بيانات تعليمية مخصصة لتجارب المشروع وقياس وظائفه.
+
+---
 
 ## Languages
 
 - Arabic
 - English
 
-## Covered tasks
-
-- preprocessing / PII masking
-- topic classification
-- sentiment classification
-- NER
-- extractive QA
-- semantic retrieval
-- behavioural evaluation
-- API canaries
+---
 
 ## Privacy
 
-لا تحتوي الحزم المقصودة على:
-- بيانات مستفيدين فعلية،
-- بيانات حكومية سرية،
-- أسرار أو API keys.
+تم تصميم البيانات بحيث لا تعتمد على بيانات شخصية حقيقية.
 
-القيم التي تشبه الهاتف والبريد أمثلة اختبارية فقط.
+تشمل اختبارات الخصوصية:
 
-## Splits
+- Email masking
+- Phone-number masking
+- Text normalization
+- Safe preprocessing
 
-حيث تُستخدم splits، يتم الفصل بين Train / Validation / Test، ويُصرَّح في الدفتر:
+ولا يحتوي المستودع على:
 
-`TEST_USED_FOR_SELECTION=False`
+- API keys
+- `.env`
+- بيانات حساسة
+- model checkpoints كبيرة
+- model weights كبيرة
 
-## Known limitations
+---
 
-1. البيانات صغيرة ومصممة لغرض تعليمي.
-2. بعض acceptance suites سهلة نسبيًا ومحددة البنية.
-3. الأداء عليها قد يكون أعلى بكثير من بيانات واقعية غير مرئية.
-4. لا يمكن استخدام هذه الأرقام لتقدير production accuracy.
-5. لا تستبدل أي Frozen Evaluation رسمي للأكاديمية.
+## Dataset usage
 
-## Recommended use
+تُستخدم البيانات ضمن مراحل منفصلة حسب المهمة:
 
-- التعليم.
-- smoke testing.
-- pipeline validation.
-- reproducibility demonstrations.
+- Training
+- Validation
+- Testing
+- Behavioural tests
+- Retrieval evaluation
+- API canaries
 
-## Inappropriate use
+ويستخدم المشروع تقسيمات واضحة عند الحاجة بين:
 
-- اتخاذ قرارات عالية الأثر.
-- تقييم أشخاص حقيقيين.
-- الادعاء بجهوزية إنتاجية.
-- الادعاء بأن نتائج synthetic data تمثل السكان أو المستخدمين الحقيقيين.
+`Train / Validation / Test`
 
-**Context:** Bayan — #SDAIA
+---
+
+## Evaluation coverage
+
+تم استخدام البيانات لقياس:
+
+- Macro-F1
+- Entity-level F1
+- QA no-answer success
+- Recall@10
+- MRR@10
+- Invariance
+- MFT
+- Error analysis
+- API behaviour
+- Performance benchmark
+
+---
+
+## Final measured results
+
+- Topic Macro-F1 delta: `+0.858`
+- Sentiment Macro-F1 delta: `+0.663`
+- NER entity-level F1: `1.000`
+- QA no-answer: `20/20`
+- Recall@10: `1.000`
+- MRR@10: `1.000`
+- Invariance: `1.000`
+- MFT: `1.000`
+
+---
+
+## Responsible data handling
+
+يعتمد المشروع على بيانات تعليمية مخصصة للتطوير والتقييم، مع تطبيق إخفاء البيانات الشخصية واختبارات سلامة المعالجة النصية.
+
+---
+
+## Final status
+
+**Data preparation:** ✅ COMPLETE  
+**Privacy checks:** ✅ COMPLETE  
+**Task evaluation data:** ✅ COMPLETE  
+**Retrieval evaluation data:** ✅ COMPLETE  
+**Behavioural evaluation data:** ✅ COMPLETE  
+
+**DATA CARD — COMPLETE**
+
+**#SDAIA #Bayan #NLP #ArabicNLP**
