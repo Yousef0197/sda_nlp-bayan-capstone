@@ -1,381 +1,104 @@
 # DECISIONS — Bayan
 
-يوثّق هذا الملف القرارات الهندسية التي تؤثر في البيانات، وجودة النماذج، والتقييم، وخدمة النظام.
+يوثّق هذا الملف القرارات الهندسية المرتبطة بالبيانات والنماذج والبحث والتقييم والخدمة.
 
-لا يُعتمد أي قرار جوهري اعتمادًا نهائيًا من غير قياس أو دليل قابل لإعادة التنفيذ.
+## D-001 — Bilingual preprocessing
 
----
+**Decision:** الحفاظ على مسار موحّد train/eval/serve، مع Unicode normalization، إزالة الكشيدة والتشكيل المستخدم في profile، توحيد صور الألف/الياء حيث يفرضه profile، وضبط المسافات وPII masking.
 
-## Day 1 — Tokenizer decision
+**Why:** منع drift بين التدريب والتقييم والخدمة، وتحسين invariance في العربية.
 
-### Decision D-001 — Bilingual tokenizer and sequence length
+**Risk:** التطبيع المفرط قد يحذف فروقًا لغوية نافعة في بيانات واقعية.
 
-- **Date:** 2026-08-30
-- **Gate:** A
-- **Status:** accepted
-- **Owner:** Yousef Al-Mutiri
+## D-002 — Canonical notebook
 
-### Context | السياق
+**Decision:** `notebooks/bayan_capstone.ipynb` هو المرجع الرئيسي للتشغيل النهائي، بينما تبقى الدفاتر التاريخية دليلًا على تطور المشروع.
 
-يتطلب مشروع بيان معالجة نصوص تعليمية ثنائية اللغة بالعربية والإنجليزية.
+**Why:** تقليل تعارضات البيئة وتوفير Clean Run واحد Day 1–Day 4.
 
-لذلك لا يكفي اختيار المرمّز استنادًا إلى أدائه في لغة واحدة، ولا يجوز الاستدلال من مقياس واحد — مثل خصوبة الترميز أو زمن التنفيذ — على جودة النموذج النهائية.
+## D-003 — Task baseline and Transformer
 
-قورِن مرمّزان:
+**Decision:** الاحتفاظ بـTF-IDF baseline ثم مقارنة مسار Transformer عليه.
 
-- `google-bert/bert-base-multilingual-cased` — mBERT
-- `aubmindlab/bert-base-arabertv02` — AraBERT
+**Measured smoke:**
+- Topic delta: `+0.858`
+- Sentiment delta: `+0.663`
 
-وشملت المقارنة القابلة لإعادة التشغيل:
+**Boundary:** النتيجة على acceptance suites اصطناعية ولا تعني production quality.
 
-- خصوبة الترميز للعربية.
-- خصوبة الترميز للإنجليزية.
-- معدل القطع عند طولين مختلفين.
-- زمن الترميز التقريبي.
-- أثر اللواصق العربية.
-- تجربة تضمينات تعليمية بثلاث بذور عشوائية.
-- التحقق من سلامة المعالجة والترميز عبر الاختبارات الآلية.
+## D-004 — NER alignment
 
-النصوص المستعملة في المقارنة اصطناعية وثابتة داخل Notebook 01.
+**Decision:** استخدام `word_ids()` وتعيين `-100` للـspecial tokens والـcontinuation subwords.
 
----
+**Measured smoke:** entity-F1 `1.000`.
 
-### Preprocessing profile | ملف المعالجة
+**Additional decision:** postprocessing lexicon مبني من Train فقط؛ لا تدخل labels من Validation/Test في القاموس.
 
-اعتمدت معالجة عربية محافظة تحافظ قدر الإمكان على النص الأصلي.
+## D-005 — QA no-answer
 
-يشمل المسار الافتراضي:
+**Decision:** استخدام null/CLS score مع constrained valid span.
 
-- Unicode normalization باستخدام `NFC`.
-- إزالة الكشيدة.
-- توحيد المسافات.
-- إخفاء البريد الإلكتروني.
-- إخفاء أرقام الهاتف.
-- الاحتفاظ بنسخة خام مستقلة عن النسخة المهيأة للنموذج.
+**Measured smoke:** `20/20` no-answer cases.
 
-ولا تُطبق افتراضيًا:
+**Boundary:** اختبار تعليمي اصطناعي، وليس بديلًا عن Frozen QA set رسمي.
 
-- إزالة التشكيل.
-- توحيد صور الألف.
+## D-006 — Semantic retrieval
 
-إذ قد يؤدي التطبيع المفرط إلى إزالة معلومات لغوية قد تحتاج إليها بعض المهام اللاحقة.
+**Decision:** FAISS candidate retrieval + bilingual concept canonicalization + reranking.
 
-مثال:
+**Measured smoke:**
+- Recall@10 `1.000`
+- MRR@10 `1.000`
 
-`مرحبــاً بكم`
+**Reason:** مسار baseline lexical وحده أضعف في cross-language matching.
 
-يصبح في نسخة النموذج:
+## D-007 — Behavioural evaluation
 
-`مرحباً بكم`
+**Decision:** قياس Invariance وMFT صراحة وعدم الاكتفاء بالمقاييس التقليدية.
 
-مع بقاء النسخة الخام محفوظة بصورة مستقلة.
+**Measured smoke:**
+- Invariance `1.000`
+- MFT `1.000`
 
----
+## D-008 — Error analysis
 
-### Options considered | البدائل
+**Decision:** توليد جدول من 100 حالة للمراجعة مع taxonomy أولية و3 إصلاحات مرتبة.
 
-| Option | Benefit | Cost / risk | Current evidence |
-|---|---|---|---|
-| mBERT | مرمّز متعدد اللغات يدعم العربية والإنجليزية ضمن مسار موحد | يجزّئ العربية أكثر من AraBERT في العينة الحالية | Arabic fertility = `2.595`, English fertility = `1.299` |
-| AraBERT v0.2 | أكثر اقتصادًا في تجزئة العربية ضمن العينة الحالية | تجزئة الإنجليزية مرتفعة، ولذلك لا يبدو ملائمًا بوصفه المرمّز الوحيد لمسار ثنائي اللغة | Arabic fertility = `1.182`, English fertility = `3.714` |
+**Boundary:** التصنيف الآلي لا يُقدّم على أنه مراجعة بشرية. يتم اعتماد manual review منفصل إذا كان شرط T9 حرفيًا.
 
----
+## D-009 — Serving path
 
-### Measured evidence | الأدلة المقاسة
+**Decision:** FastAPI مع `/health` و`/v1/classify`، ودعم ar/en وinvalid input وPII canary.
 
-#### 1. Arabic clitic probe
+## D-010 — Performance budget
 
-اختُبرت الكلمتان:
+**Target:** HTTP p99 ≤ 40ms at concurrency 16.
 
-`الخدمة`
+**Measured:** `32.907 ms` في Colab باستخدام FastAPI + ASGI transport.
 
-و:
+**Decision:** لا نعتبر هذا دليل lab-CPU نهائيًا إذا كان rubric يفرض CPU محددًا؛ يعاد القياس على البيئة الرسمية قبل release.
 
-`وبالخدمة`
+## D-011 — Measured extension
 
-باستخدام mBERT.
+**Extension:** bilingual concept canonicalization + reranking.
 
-كانت نتيجة:
+**Before/after delta:** `+0.88` Top-1.
 
-`الخدمة`
+**Decision:** `KEEP`.
 
-هي:
+## D-012 — ONNX/INT8
 
-`['ال', '##خدمة']`
+**Decision:** `NOT ADOPTED IN FINAL PATH`.
 
-بعدد:
+**Reason:** لا يوجد في الـcanonical clean run قياس before/after موثق للجودة والlatency والحجم يبرر التحويل. عدم الادعاء أفضل من إضافة optimisation غير مقاس.
 
-`2`
+## D-013 — Release evidence
 
-قطعتين.
+لا يتم إنشاء `submission-v1.0` إلا بعد:
+- validator،
+- T9 manual review عند الحاجة،
+- T10 official-environment check عند الحاجة،
+- presentation،
+- public/private-window verification.
 
-أما:
-
-`وبالخدمة`
-
-فكانت:
-
-`['وب', '##ال', '##خدمة']`
-
-بعدد:
-
-`3`
-
-قطع.
-
-يبين ذلك أن اتصال اللواصق العربية قد يغيّر بنية التجزئة، ولذلك لا ينبغي افتراض أن الكلمة العربية وحدة ترميز ثابتة لا تتأثر بالبنية الصرفية.
-
-كما أُضيف اختبار آلي صريح للحالة:
-
-`وبالخدمة`
-
-إلى:
-
-`tests/test_day1_tokenization.py`
-
----
-
-#### 2. Bilingual token fertility
-
-استُخدمت عينة اصطناعية ثابتة من أربعة نصوص عربية وأربعة نصوص إنجليزية.
-
-كانت النتائج:
-
-| Tokenizer | Arabic fertility | English fertility |
-|---|---:|---:|
-| mBERT | `2.595` | `1.299` |
-| AraBERT | `1.182` | `3.714` |
-
-أظهر AraBERT اقتصادًا أفضل في تجزئة العربية.
-
-في المقابل، ارتفعت خصوبة الإنجليزية لديه بوضوح.
-
-أما mBERT فأظهر توازنًا أفضل بين اللغتين في هذه العينة، مع بقائه أقل اقتصادًا في العربية.
-
-لا يُعد انخفاض الخصوبة وحده دليلًا على جودة أعلى في مهمة downstream.
-
----
-
-#### 3. Bilingual truncation
-
-قيس معدل القطع عند طولين:
-
-- `max_length = 32`
-- `max_length = 64`
-
-وكانت النتائج:
-
-| Tokenizer | Language | max_length=32 | max_length=64 |
-|---|---|---:|---:|
-| mBERT | Arabic | `0.0%` | `0.0%` |
-| mBERT | English | `0.0%` | `0.0%` |
-| mBERT | Combined | `0.0%` | `0.0%` |
-| AraBERT | Arabic | `0.0%` | `0.0%` |
-| AraBERT | English | `0.0%` | `0.0%` |
-| AraBERT | Combined | `0.0%` | `0.0%` |
-
-لم تُظهر العينة الحالية أي قطع عند الطولين.
-
-لذلك لا يجوز الاستنتاج من هذه العينة وحدها أن `32` كافٍ لجميع بيانات المشروع.
-
-سيُعاد القياس بعد تجميد مجموعة البيانات النهائية.
-
----
-
-#### 4. Approximate tokenisation time
-
-في التشغيل النظيف المحفوظ كانت القياسات التقريبية:
-
-| Tokenizer | Mean tokenisation time |
-|---|---:|
-| mBERT | `0.1421 ms` |
-| AraBERT | `0.1631 ms` |
-
-هذه الأرقام مأخوذة من عينة صغيرة وفي بيئة Notebook.
-
-لذلك لا تعد Benchmark نهائيًا للأداء، ولا يجوز استخدامها لإثبات تفوق أحد النموذجين في بيئة الخدمة النهائية.
-
-سيُجرى Benchmark مستقل لاحقًا وفق متطلبات المشروع الخاصة بزمن الاستجابة والتزامن.
-
----
-
-#### 5. Three-seed embedding experiment
-
-أُعيد إنشاء جدول تضمينات تعليمي باستخدام ثلاث بذور:
-
-- `7`
-- `42`
-- `2026`
-
-في جميع التشغيلات بقي شكل المخرجات:
-
-`(2, 5, 8)`
-
-ثابتًا.
-
-تغيرت القيم العددية للتضمينات عند تغيير البذرة، بينما بقي:
-
-- شكل المصفوفة.
-- Token IDs.
-- بنية المدخلات.
-
-ثابتًا.
-
-يثبت ذلك في هذه التجربة أن البذرة تغير القيم العشوائية الابتدائية، لكنها لا تغير بنية المدخلات أو أبعاد المخرجات.
-
----
-
-#### 6. Automated tests
-
-بعد إتمام تنظيف Notebook 01 وإضافة اختبار اللصيقة العربية، شُغلت اختبارات اليوم الأول محليًا:
-
-`tests/test_day1_preprocessing.py`
-
-`tests/test_day1_tokenization.py`
-
-`tests/test_day1_attention.py`
-
-بالأمر:
-
-`$env:PYTHONPATH="src"; python -m pytest -q tests/test_day1_preprocessing.py tests/test_day1_tokenization.py tests/test_day1_attention.py`
-
-وكانت النتيجة:
-
-`10 passed in 0.16s`
-
----
-
-### Reproducibility evidence | دليل قابلية إعادة التشغيل
-
-أُعيد تشغيل Notebook 01 من جلسة نظيفة وبالترتيب الكامل.
-
-ظهر دليل النجاح الأساسي:
-
-`DAY1_NOTEBOOK1_CORE=PASS`
-
-كما ظهرت أدلة التميز:
-
-`DISTINCTION_CLITIC_TEST=PASS`
-
-`DISTINCTION_THREE_SEEDS=PASS`
-
-`DISTINCTION_TOKENIZER_COMPARISON=PASS`
-
-`BILINGUAL_TRUNCATION_MEASUREMENT=PASS`
-
-`DAY1_DISTINCTION_REPRODUCIBLE=PASS`
-
-بيئة التشغيل المحفوظة في Notebook 01:
-
-`Python 3.13.15`
-
----
-
-### Evidence provenance | مصدر الأدلة
-
-ترتبط أدلة هذا القرار بالتغييرات التالية:
-
-- `46bda67` — جعل مقارنة التميز قابلة لإعادة التشغيل من الصفر.
-- `c12b501` — التحقق من التشغيل النظيف لـ Notebook 01.
-- `dfc4083` — توثيق جدول قرار المرمّز داخل Notebook 01.
-- `3b1c903` — إضافة اختبار اللصيقة العربية.
-- `de53b08` — تنظيف بيانات التنفيذ الوصفية القديمة في Notebook 01.
-
-الأرقام الواردة في هذا القرار تعتمد التشغيل النظيف الحالي.
-
-القياسات الاستكشافية الأقدم لا تُستخدم بوصفها الدليل الحالي للقرار إذا تعارضت مع هذه القياسات القابلة لإعادة التشغيل.
-
----
-
-### Decision | القرار
-
-يُعتمد مبدئيًا:
-
-`google-bert/bert-base-multilingual-cased`
-
-أي:
-
-`mBERT`
-
-بوصفه المرمّز المرشح للمسار الثنائي اللغة في بيان.
-
-لا يستند القرار إلى تفوق مطلق لـ mBERT.
-
-بل يستند إلى أن المقارنة الحالية أظهرت توازنًا أفضل بين العربية والإنجليزية عند الحاجة إلى مرمّز واحد للمسار الموحد.
-
-أظهر AraBERT كفاءة أعلى في تجزئة العربية، لكنه أظهر خصوبة مرتفعة في الإنجليزية ضمن العينة الحالية.
-
-أما طول التسلسل المبدئي فيكون:
-
-`max_length = 64`
-
-بوصفه هامشًا أوليًا للنصوص الأطول.
-
-ومع ذلك، أظهرت العينة الحالية معدل قطع:
-
-`0.0%`
-
-حتى عند:
-
-`max_length = 32`
-
-لذلك سيُعاد قياس طول التسلسل بعد تجميد مجموعة البيانات، ولا يُعد اختيار `64` دليلًا على عدم صلاحية `32`.
-
----
-
-### Known limitations | القيود المعروفة
-
-1. العينة المستخدمة في المقارنة صغيرة واصطناعية، وليست مجموعة التقييم النهائية للمشروع.
-2. خصوبة الترميز لا تثبت وحدها جودة النموذج في التصنيف أو تحليل المشاعر أو NER أو QA أو البحث الدلالي.
-3. معدل القطع الحالي لا يمثل بالضرورة النصوص الأطول التي ستظهر في البيانات النهائية.
-4. زمن الترميز المقاس ليس Benchmark نهائيًا للخدمة.
-5. AraBERT أكثر اقتصادًا في العربية ضمن العينة الحالية، ولذلك يبقى مرشحًا لتجارب عربية متخصصة إذا اقتضت النتائج ذلك.
-6. يجب أن يكون المرمّز والنموذج المستخدمان فعليًا في التدريب والاستدلال متوافقين مع checkpoint نفسه.
-7. قرار المرمّز الحالي مبدئي، ويمكن مراجعته إذا أظهرت مقاييس المهام النهائية نتائج مختلفة.
-8. ستُعاد قياسات طول التسلسل والقطع بعد تجميد مجموعة البيانات.
-9. لا ينبغي مقارنة فروق زمنية صغيرة في Notebook واحد بوصفها دليلًا على تفوق أداء نهائي.
-
----
-
-### Consequences and rollback | الأثر والرجوع
-
-**Positive consequence:**
-
-استخدام مرمّز واحد قادر على معالجة العربية والإنجليزية ضمن المسار الموحد.
-
-**Limitation / new risk:**
-
-تجزئة mBERT للنص العربي أعلى من AraBERT في العينة الحالية، وقد يؤدي ذلك مع النصوص الأطول إلى زيادة طول التسلسلات والكلفة الحسابية.
-
-**Rollback trigger:**
-
-يُراجع القرار عند ظهور واحد أو أكثر من الآتي:
-
-- انخفاض ملحوظ في جودة المهام العربية.
-- ارتفاع غير مقبول في معدل القطع.
-- زيادة الكلفة الحسابية.
-- تفوق مرمّز آخر بوضوح في مقاييس المهمة الفعلية على البيانات المجمدة.
-
-**Rollback path:**
-
-تُعاد المقارنة باستخدام:
-
-- جودة المهمة الفعلية.
-- البيانات المجمدة.
-- المقاييس نفسها.
-- إعدادات قابلة لإعادة التشغيل.
-
-ويمكن حينها اعتماد مرمّز متعدد اللغات بديل أو دراسة مسار عربي متخصص إذا دعمت القياسات ذلك.
-
----
-
-## Mandatory decisions before Gate E | القرارات الإلزامية قبل البوابة E
-
-- [x] Tokenizer + initial maximum sequence length.
-- [x] Arabic preprocessing profile — معالجة محافظة موثقة في Day 1.
-- [ ] Task model, baseline, and frozen split — سيُحسم عند مرحلة النمذجة.
-- [ ] Semantic encoder, index, k, and threshold — سيُحسم عند مرحلة البحث الدلالي.
-- [ ] Metrics, slices, and error priorities — سيُستكمل مع خطة التقييم.
-- [ ] Performance budget — سيُحسم قبل Benchmark الخدمة.
-- [ ] ONNX/INT8 adopt or reject — سيُحسم بعد قياس الجودة والأداء قبل وبعد التحويل.
-- [ ] Served artefact and preprocessing/label versions — سيُثبت قبل الإصدار النهائي.
+**Training context tag:** #SDAIA
