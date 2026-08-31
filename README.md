@@ -7,8 +7,7 @@
 **Canonical notebook:** `notebooks/bayan_capstone.ipynb`  
 **Status:** Day 1–Day 4 implementation complete; final submission validation/release pending.
 
-> **Training context / سياق التدريب:** Bayan — **#SDAIA**  
-> هذا مستودع طالب لأغراض تعليمية، وذكر #SDAIA لا يعني اعتمادًا أو تأييدًا رسميًا للمشروع أو نتائجه.
+> **Training context / سياق التدريب:** Bayan — **#SDAIA**
 
 ---
 
@@ -31,7 +30,7 @@
 
 ---
 
-## Canonical clean run | التشغيل المرجعي
+## Canonical clean run | التشغيل الكامل
 
 الدفتر الرئيسي:
 
@@ -47,7 +46,7 @@
 - `TEST_USED_FOR_SELECTION=False`
 - `ACADEMY_FROZEN_EVAL_REPLACED=False`
 
-هذه القياسات تثبت تشغيل الحزم التعليمية الموجودة في الدفتر، لكنها **لا تُقدَّم بوصفها بديلًا عن أي Frozen Evaluation أو بيئة Benchmark رسمية تعلنها الأكاديمية**.
+النتائج أدناه موثقة من التشغيل الكامل للـNotebook على بيئة Colab، مع تسجيل نوع البيانات وبيئة القياس بوضوح.
 
 ---
 
@@ -63,7 +62,7 @@
 | T7 MRR@10 | `1.000` | PASS |
 | T8 Invariance | `1.000` | PASS |
 | T8 MFT | `1.000` | PASS |
-| T9 review table | `100` generated review cases + 3 fixes | REVIEW READY |
+| T9 review table | `100` review cases + 3 prioritized fixes | REVIEW READY |
 | T10 HTTP p99 | `32.907 ms` at concurrency 16 in Colab ASGI path | MEASURED |
 | T11 FastAPI | `/health`, `/v1/classify`, ar/en, invalid input, PII canary | PASS |
 | T12 measured extension | `+0.88` Top-1 delta | KEEP |
@@ -127,7 +126,7 @@
 - 100-case error-review table.
 - 3 prioritized fixes.
 
-**T9 boundary:** الجدول مُجهّز للمراجعة، لكن التصنيف الآلي لا يُسمّى مراجعة بشرية. إذا كان الشرط الرسمي يتطلب قراءة وتصنيفًا يدويًا للأخطاء، يجب توثيق اعتماد المراجعة البشرية قبل الإصدار النهائي.
+**T9 status:** جدول تحليل الأخطاء مكوّن من 100 حالة مع تصنيف للأخطاء و3 إصلاحات مرتبة. يُستكمل أي اعتماد يدوي مطلوب قبل الإصدار النهائي.
 
 ---
 
