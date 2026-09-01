@@ -189,3 +189,44 @@ def test_final_mode_checks_local_git_tag(tmp_path: Path):
     subprocess.run(["git", "-C", str(tmp_path), "tag", "submission-v1.0"], check=True)
     present = validate_project(tmp_path, require_git_tag=True)
     assert present.passed is True
+
+
+def test_final_mode_rejects_tag_that_does_not_point_to_head(tmp_path: Path):
+    build_valid_project(tmp_path)
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "add", "."], check=True)
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            str(tmp_path),
+            "-c",
+            "user.name=Bayan Test",
+            "-c",
+            "user.email=bayan-test@example.invalid",
+            "commit",
+            "-qm",
+            "first fixture",
+        ],
+        check=True,
+    )
+    subprocess.run(["git", "-C", str(tmp_path), "tag", "submission-v1.0"], check=True)
+    (tmp_path / "README.md").write_text("Completed evidence\nUpdated\n", encoding="utf-8")
+    subprocess.run(["git", "-C", str(tmp_path), "add", "README.md"], check=True)
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            str(tmp_path),
+            "-c",
+            "user.name=Bayan Test",
+            "-c",
+            "user.email=bayan-test@example.invalid",
+            "commit",
+            "-qm",
+            "second fixture",
+        ],
+        check=True,
+    )
+    stale = validate_project(tmp_path, require_git_tag=True)
+    assert any("must point to HEAD" in error for error in stale.errors)
