@@ -9,7 +9,9 @@
 
 **Status:** Day 1–Day 4 implementation complete; final submission validated and tagged as `submission-v1.0`.
 
-> **Training context / سياق التدريب:** Bayan — **#SDAIA**
+> **Program / البرنامج:** SDA-AIE-211 — Natural Language Processing with Transformers  
+> **Instructor / المدربة:** Meaad Al-Marri | ميعاد المري  
+> **Academy / الأكاديمية:** [@SDAIAAcademy](https://github.com/SDAIAAcademy) — أكاديمية سدايا
 
 ---
 
@@ -164,7 +166,7 @@ The earlier Colab ASGI measurement remains a smoke measurement. If the academy r
 
 القرار:
 
-`PASS`
+`KEEP`
 
 ---
 
@@ -237,12 +239,15 @@ flowchart LR
 - Submission validator: `BAYAN_SUBMISSION_VALIDATOR=PASS`.
 - Public GitHub repository verified in a private browser window.
 - Public Colab notebook link verified in a private browser window.
+- Final presentation complete.
 - Final tag: `submission-v1.0`.
 
 ---
 
 ## Acknowledgement & tags
 
-Developed as an educational capstone in the Bayan learning context.
+نُفذ هذا المشروع ضمن برنامج **SDA-AIE-211 — Natural Language Processing with Transformers**، بإعداد وتقديم المدربة **ميعاد المري | Meaad Al-Marri**، ضمن برامج **أكاديمية سدايا**.
+
+GitHub: [@SDAIAAcademy](https://github.com/SDAIAAcademy)
 
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**
