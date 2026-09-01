@@ -273,7 +273,7 @@ Bayan هو مسار تطبيقي ثنائي اللغة لمعالجة اللغة
 
 ## Measured extension
 
-تمت إضافة:
+تمت إضافة الامتداد التالي:
 
 **Bilingual concept canonicalization + reranking**
 
@@ -283,9 +283,15 @@ Bayan هو مسار تطبيقي ثنائي اللغة لمعالجة اللغة
 
 ### Decision
 
-`KEEP`
+`ADOPT`
 
-**Result:** ✅ PASS
+### Status
+
+`PASS`
+
+يوضح القرار أن الامتداد تم اعتماده بعد القياس لأن المقارنة قبل/بعد أظهرت تحسنًا موجبًا في Top-1.
+
+**T12 Result:** ✅ PASS
 
 ---
 
