@@ -166,7 +166,7 @@ The earlier Colab ASGI measurement remains a smoke measurement. If the academy r
 
 القرار:
 
-`KEEP`
+`ADOPT`
 
 ---
 
