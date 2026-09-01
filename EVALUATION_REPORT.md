@@ -1,7 +1,7 @@
 # EVALUATION_REPORT — Bayan
 
 **Project:** Bayan — Bilingual Applied NLP Capstone  
-**Training context:** Bayan — **#SDAIA**
+**Training context:** Bayan — [@SDAIAAcademy](https://github.com/SDAIAAcademy) — **#SDAIA**
 
 ## Evaluation policy
 
@@ -248,4 +248,5 @@ These labels represent the same decision: retain the measured improved candidate
 **Academy reference CPU claimed:** ❌ NO  
 **Final release tag:** ⏳ REFRESH AFTER FINAL CI/VALIDATION
 
+**Academy GitHub:** [@SDAIAAcademy](https://github.com/SDAIAAcademy)  
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**
