@@ -218,6 +218,8 @@ Same-workload comparison:
 
 **Why:** التحسن المقاس موجب وكبير على workload نفسه، والقرار مرتبط بالنتيجة وليس بإضافة شكلية.
 
+**Quality/cost trade-off:** تضيف canonicalization وreranking مرحلة معالجة وترتيب إضافية مقارنة بالمسار الأبسط، لكن هذه الكلفة الهندسية مقبولة لأن القياس على workload نفسه رفع Top-1 بمقدار `+0.88`. كما أن تحليل T9 يجعل المخاطر المتبقية قابلة للتتبع عبر `2` أخطاء متبقية من أصل `108` أخطاء baseline موثقة، لذلك يُعتمد التحسين مع الإبقاء على القياس والـfallback كضوابط تشغيلية.
+
 **Status:** ✅ ADOPTED
 
 ## D-015 — Reproducible submission contract
@@ -243,7 +245,7 @@ The final project emphasizes evidence depth and engineering quality:
 - reproducible measurements and explicit environments;
 - automated tests and CI;
 - structured error analysis with three prioritized fixes;
-- a measured before/after extension with an explicit `ADOPT` decision;
+- a measured before/after extension with an explicit `ADOPT` decision and documented quality/cost trade-off;
 - clear data, model, evaluation, benchmark and decision documentation.
 
 ## Final decision summary
