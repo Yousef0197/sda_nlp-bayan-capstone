@@ -275,8 +275,32 @@ def _validate_tag(root: Path, result: ValidationResult) -> None:
         return
     if completed.stdout.strip() != "submission-v1.0":
         result.errors.append("Git tag submission-v1.0 is missing")
-    else:
-        result.checks.append("Final Git tag submission-v1.0")
+        return
+
+    try:
+        tag_commit = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "submission-v1.0^{commit}"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout.strip()
+        head_commit = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError) as exc:
+        result.errors.append(f"Could not resolve final Git tag: {exc}")
+        return
+
+    if tag_commit != head_commit:
+        result.errors.append("Git tag submission-v1.0 must point to HEAD")
+        return
+
+    result.checks.append("Final Git tag submission-v1.0 points to HEAD")
 
 
 def validate_project(root: str | Path, *, require_git_tag: bool = False) -> ValidationResult:
