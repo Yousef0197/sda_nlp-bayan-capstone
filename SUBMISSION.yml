@@ -1,41 +1,7 @@
-project:
-  name: Bayan Bilingual Applied NLP Capstone
-  repository: Yousef0197/sda_nlp-bayan-capstone
-  canonical_notebook: notebooks/bayan_capstone.ipynb
-  training_context: Bayan
-  tag: "#SDAIA"
-  status: COMPLETE
-
-gates:
-  A: COMPLETE
-  B: COMPLETE
-  C: COMPLETE
-  D: COMPLETE
-  E: COMPLETE
-
-results:
-  topic_macro_f1_delta: 0.858
-  sentiment_macro_f1_delta: 0.663
-  ner_entity_f1: 1.0
-  qa_no_answer: "20/20"
-  recall_at_10: 1.0
-  mrr_at_10: 1.0
-  invariance: 1.0
-  mft: 1.0
-  error_analysis_cases: 100
-  http_concurrency: 16
-  http_p99_ms: 32.907
-  extension_top1_delta: 0.88
-  extension_decision: KEEP
-
-final_checks:
-  implementation: COMPLETE
-  documentation: COMPLETE
-  validation: COMPLETE
-  presentation: COMPLETE
-  public_repository_check: COMPLETE
-  release_tag: COMPLETE
-
-release:
-  final_tag: submission-v1.0
-  status: COMPLETE
+course: bayan-applied-nlp
+default_branch: main
+final_tag: submission-v1.0
+runtime: google-colab
+visibility: public
+student_github: Yousef0197
+repository: https://github.com/Yousef0197/sda_nlp-bayan-capstone
