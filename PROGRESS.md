@@ -155,9 +155,13 @@ Bilingual concept canonicalization + reranking
 
 **Decision:**
 
-`KEEP`
+`ADOPT`
 
-**T12 status:** ✅ COMPLETE
+**T12 status:** ✅ PASS
+
+تم اعتماد الامتداد بعد القياس لأن المقارنة قبل/بعد أظهرت تحسنًا موجبًا في Top-1 بمقدار `+0.88`.
+
+**Implementation:** ✅ COMPLETE
 
 ---
 
