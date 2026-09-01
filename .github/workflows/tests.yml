@@ -37,6 +37,9 @@ jobs:
           PYTHONPATH: src
         run: pytest -q
 
+      - name: Verify data SHA-256
+        run: sha256sum data/sample/*
+
       - name: Run submission validator
         env:
           PYTHONPATH: src
