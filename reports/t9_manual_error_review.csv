@@ -1,21 +1,109 @@
-﻿query_id,lang,query,relevant,baseline_top1,improved_top1,baseline_error,improved_error,category,manual_category,manual_reviewed
-Q01-0,ar,كيف يمكن تجديد التصريح؟ فضلا,D01,D11,D01,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
-Q03-0,ar,اين اجد جدول مواعيد الحافلة؟ فضلا,D03,D14,D03,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q05-0,ar,كيف اعيد تعيين كلمة المرور؟ فضلا,D05,D15,D05,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q07-0,ar,كيف يمكن تحميل الشهادة؟ فضلا,D07,D17,D07,True,False,cross_language_lexical_gap,normalization_drift,True
-Q09-0,ar,كيف اقدم طلب المنحة؟ فضلا,D09,D19,D09,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
-Q01-1,ar,كيف يمكن تجديد التصريح؟ لو سمحت,D01,D11,D01,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q03-1,ar,اين اجد جدول مواعيد الحافلة؟ لو سمحت,D03,D14,D03,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q05-1,ar,كيف اعيد تعيين كلمة المرور؟ لو سمحت,D05,D15,D05,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q07-1,ar,كيف يمكن تحميل الشهادة؟ لو سمحت,D07,D17,D07,True,False,cross_language_lexical_gap,normalization_drift,True
-Q09-1,ar,كيف اقدم طلب المنحة؟ لو سمحت,D09,D19,D09,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q02-0,en,How do I book a clinic appointment? please,D02,D19,D02,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
-Q04-0,en,How can I track my complaint? please,D04,D14,D04,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q06-0,en,How can I pay the invoice? please,D06,D16,D06,True,False,cross_language_lexical_gap,normalization_drift,True
-Q10-0,en,How do I register for the course? please,D10,D05,D10,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q02-1,en,How do I book a clinic appointment? today,D02,D19,D02,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
-Q04-1,en,How can I track my complaint? today,D04,D14,D04,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q06-1,en,How can I pay the invoice? today,D06,D08,D06,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q10-1,en,How do I register for the course? today,D10,D05,D10,True,False,cross_language_lexical_gap,cross_language_lexical_gap,True
-Q02-2,en,How do I book a clinic appointment? now,D02,D19,D02,True,False,cross_language_lexical_gap,candidate_ordering,True
-Q04-2,en,How can I track my complaint? now,D04,D14,D04,True,False,cross_language_lexical_gap,candidate_ordering,True
+query_id,lang,query,relevant,baseline_top1,improved_top1,manual_category,improved_error
+Q01-M01,ar,كيف يمكن تجديد التصريح؟ فضلا,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M02,ar,كيف يمكن تجديد التصريح؟ لو سمحت,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M03,ar,كيف يمكن تجديد التصريح؟ من فضلك,D01,D02,D01,modifier_noise_ranking_instability,False
+Q01-M04,ar,كيف يمكن تجديد التصريح؟ الان,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M05,ar,كيف يمكن تجديد التصريح؟ اليوم,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M06,ar,كيف يمكن تجديد التصريح؟ بسرعة,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M07,ar,كيف يمكن تجديد التصريح؟ للضرورة,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M08,ar,كيف يمكن تجديد التصريح؟ عبر الجوال,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M09,ar,كيف يمكن تجديد التصريح؟ من التطبيق,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M10,ar,كيف يمكن تجديد التصريح؟ الكترونيا,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M11,ar,كيف يمكن تجديد التصريح؟ ممكن تساعدني,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q01-M12,ar,كيف يمكن تجديد التصريح؟ وشكرا,D01,D11,D01,cross_language_intent_specificity_gap,False
+Q02-M01,en,How do I book a clinic appointment? please,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M02,en,How do I book a clinic appointment? today,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M03,en,How do I book a clinic appointment? now,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M04,en,How do I book a clinic appointment? for me,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M05,en,How do I book a clinic appointment? quickly,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M06,en,How do I book a clinic appointment? urgently,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M07,en,How do I book a clinic appointment? via mobile,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M08,en,How do I book a clinic appointment? in the app,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M09,en,How do I book a clinic appointment? online,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M10,en,How do I book a clinic appointment? through the portal,D02,D19,D02,hash_collision_candidate_ordering,False
+Q02-M11,en,How do I book a clinic appointment? can you help,D02,D08,D02,modifier_noise_ranking_instability,False
+Q02-M12,en,How do I book a clinic appointment? right now,D02,D19,D02,hash_collision_candidate_ordering,False
+Q03-M01,ar,اين اجد جدول مواعيد الحافلة؟ فضلا,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M02,ar,اين اجد جدول مواعيد الحافلة؟ لو سمحت,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M03,ar,اين اجد جدول مواعيد الحافلة؟ من فضلك,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M04,ar,اين اجد جدول مواعيد الحافلة؟ الان,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M05,ar,اين اجد جدول مواعيد الحافلة؟ اليوم,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M06,ar,اين اجد جدول مواعيد الحافلة؟ بسرعة,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M07,ar,اين اجد جدول مواعيد الحافلة؟ للضرورة,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M08,ar,اين اجد جدول مواعيد الحافلة؟ عبر الجوال,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M09,ar,اين اجد جدول مواعيد الحافلة؟ من التطبيق,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M10,ar,اين اجد جدول مواعيد الحافلة؟ الكترونيا,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M11,ar,اين اجد جدول مواعيد الحافلة؟ ممكن تساعدني,D03,D14,D03,hash_collision_candidate_ordering,False
+Q03-M12,ar,اين اجد جدول مواعيد الحافلة؟ وشكرا,D03,D14,D03,hash_collision_candidate_ordering,False
+Q04-M01,en,How can I track my complaint? please,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M02,en,How can I track my complaint? today,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M03,en,How can I track my complaint? now,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M04,en,How can I track my complaint? for me,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M05,en,How can I track my complaint? quickly,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M06,en,How can I track my complaint? urgently,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M07,en,How can I track my complaint? via mobile,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M08,en,How can I track my complaint? in the app,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M09,en,How can I track my complaint? online,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M10,en,How can I track my complaint? through the portal,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q04-M11,en,How can I track my complaint? can you help,D04,D03,D04,modifier_noise_ranking_instability,False
+Q04-M12,en,How can I track my complaint? right now,D04,D14,D04,cross_language_intent_specificity_gap,False
+Q05-M01,ar,كيف اعيد تعيين كلمة المرور؟ فضلا,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M02,ar,كيف اعيد تعيين كلمة المرور؟ لو سمحت,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M03,ar,كيف اعيد تعيين كلمة المرور؟ من فضلك,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M04,ar,كيف اعيد تعيين كلمة المرور؟ الان,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M05,ar,كيف اعيد تعيين كلمة المرور؟ اليوم,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M06,ar,كيف اعيد تعيين كلمة المرور؟ بسرعة,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M07,ar,كيف اعيد تعيين كلمة المرور؟ للضرورة,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M08,ar,كيف اعيد تعيين كلمة المرور؟ عبر الجوال,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M09,ar,كيف اعيد تعيين كلمة المرور؟ من التطبيق,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M10,ar,كيف اعيد تعيين كلمة المرور؟ الكترونيا,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M11,ar,كيف اعيد تعيين كلمة المرور؟ ممكن تساعدني,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q05-M12,ar,كيف اعيد تعيين كلمة المرور؟ وشكرا,D05,D15,D05,cross_language_intent_specificity_gap,False
+Q06-M01,en,How can I pay the invoice? please,D06,D16,D06,cross_language_intent_specificity_gap,False
+Q06-M02,en,How can I pay the invoice? today,D06,D08,D06,hash_collision_candidate_ordering,False
+Q06-M03,en,How can I pay the invoice? now,D06,D08,D06,hash_collision_candidate_ordering,False
+Q06-M04,en,How can I pay the invoice? for me,D06,D08,D06,hash_collision_candidate_ordering,False
+Q06-M05,en,How can I pay the invoice? quickly,D06,D08,D06,hash_collision_candidate_ordering,False
+Q06-M06,en,How can I pay the invoice? urgently,D06,D16,D06,cross_language_intent_specificity_gap,False
+Q06-M07,en,How can I pay the invoice? via mobile,D06,D08,D06,hash_collision_candidate_ordering,False
+Q06-M08,en,How can I pay the invoice? in the app,D06,D08,D06,hash_collision_candidate_ordering,False
+Q06-M09,en,How can I pay the invoice? online,D06,D08,D06,hash_collision_candidate_ordering,False
+Q06-M10,en,How can I pay the invoice? through the portal,D06,D16,D06,cross_language_intent_specificity_gap,False
+Q06-M11,en,How can I pay the invoice? can you help,D06,D08,D06,hash_collision_candidate_ordering,False
+Q06-M12,en,How can I pay the invoice? right now,D06,D08,D06,hash_collision_candidate_ordering,False
+Q07-M01,ar,كيف يمكن تحميل الشهادة؟ فضلا,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M02,ar,كيف يمكن تحميل الشهادة؟ لو سمحت,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M03,ar,كيف يمكن تحميل الشهادة؟ من فضلك,D07,D02,D07,modifier_noise_ranking_instability,False
+Q07-M04,ar,كيف يمكن تحميل الشهادة؟ الان,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M05,ar,كيف يمكن تحميل الشهادة؟ اليوم,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M06,ar,كيف يمكن تحميل الشهادة؟ بسرعة,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M07,ar,كيف يمكن تحميل الشهادة؟ للضرورة,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M08,ar,كيف يمكن تحميل الشهادة؟ عبر الجوال,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M09,ar,كيف يمكن تحميل الشهادة؟ من التطبيق,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M10,ar,كيف يمكن تحميل الشهادة؟ الكترونيا,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M11,ar,كيف يمكن تحميل الشهادة؟ ممكن تساعدني,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q07-M12,ar,كيف يمكن تحميل الشهادة؟ وشكرا,D07,D17,D07,cross_language_intent_specificity_gap,False
+Q08-M11,en,How can I update my address? can you help,D08,D03,D08,hash_collision_candidate_ordering,False
+Q09-M01,ar,كيف اقدم طلب المنحة؟ فضلا,D09,D19,D09,cross_language_intent_specificity_gap,False
+Q09-M02,ar,كيف اقدم طلب المنحة؟ لو سمحت,D09,D19,D09,cross_language_intent_specificity_gap,False
+Q09-M03,ar,كيف اقدم طلب المنحة؟ من فضلك,D09,D14,D09,modifier_noise_ranking_instability,False
+Q09-M04,ar,كيف اقدم طلب المنحة؟ الان,D09,D04,D09,modifier_noise_ranking_instability,False
+Q09-M05,ar,كيف اقدم طلب المنحة؟ اليوم,D09,D15,D09,modifier_noise_ranking_instability,False
+Q09-M06,ar,كيف اقدم طلب المنحة؟ بسرعة,D09,D19,D09,cross_language_intent_specificity_gap,False
+Q09-M07,ar,كيف اقدم طلب المنحة؟ للضرورة,D09,D15,D09,modifier_noise_ranking_instability,False
+Q09-M08,ar,كيف اقدم طلب المنحة؟ عبر الجوال,D09,D19,D09,cross_language_intent_specificity_gap,False
+Q09-M09,ar,كيف اقدم طلب المنحة؟ من التطبيق,D09,D19,D09,cross_language_intent_specificity_gap,False
+Q09-M10,ar,كيف اقدم طلب المنحة؟ الكترونيا,D09,D19,D09,cross_language_intent_specificity_gap,False
+Q09-M11,ar,كيف اقدم طلب المنحة؟ ممكن تساعدني,D09,D19,D09,cross_language_intent_specificity_gap,False
+Q09-M12,ar,كيف اقدم طلب المنحة؟ وشكرا,D09,D19,D09,cross_language_intent_specificity_gap,False
+Q10-M01,en,How do I register for the course? please,D10,D05,D10,hash_collision_candidate_ordering,False
+Q10-M02,en,How do I register for the course? today,D10,D05,D10,hash_collision_candidate_ordering,False
+Q10-M03,en,How do I register for the course? now,D10,D05,D10,hash_collision_candidate_ordering,False
+Q10-M04,en,How do I register for the course? for me,D10,D05,D05,hash_collision_candidate_ordering,True
+Q10-M05,en,How do I register for the course? quickly,D10,D05,D10,hash_collision_candidate_ordering,False
+Q10-M07,en,How do I register for the course? via mobile,D10,D05,D05,hash_collision_candidate_ordering,True
+Q10-M08,en,How do I register for the course? in the app,D10,D05,D10,hash_collision_candidate_ordering,False
+Q10-M09,en,How do I register for the course? online,D10,D05,D10,hash_collision_candidate_ordering,False
+Q10-M10,en,How do I register for the course? through the portal,D10,D05,D10,hash_collision_candidate_ordering,False
+Q10-M11,en,How do I register for the course? can you help,D10,D05,D10,hash_collision_candidate_ordering,False
+Q10-M12,en,How do I register for the course? right now,D10,D05,D10,hash_collision_candidate_ordering,False
