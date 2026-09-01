@@ -5,7 +5,9 @@
 **Student:** Yousef Al-Mutiri  
 **Repository:** `Yousef0197/sda_nlp-bayan-capstone`  
 **Canonical notebook:** `notebooks/bayan_capstone.ipynb`  
-**Status:** Day 1–Day 4 implementation complete; final submission validation/release pending.
+**Open in Colab:** https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/bayan_capstone.ipynb
+
+**Status:** Day 1–Day 4 implementation complete; final submission validated and tagged as `submission-v1.0`.
 
 > **Training context / سياق التدريب:** Bayan — **#SDAIA**
 
@@ -46,13 +48,13 @@
 - `TEST_USED_FOR_SELECTION=False`
 - `ACADEMY_FROZEN_EVAL_REPLACED=False`
 
-النتائج أدناه موثقة من التشغيل الكامل للـNotebook على بيئة Colab، مع تسجيل نوع البيانات وبيئة القياس بوضوح.
+النتائج أدناه تجمع بين نتائج التشغيل الكامل للـNotebook على بيئة Colab والأدلة المقاسة الإضافية الموثقة داخل المستودع، مع توضيح بيئة كل قياس.
 
 ---
 
 ## Measured results | النتائج المقاسة
 
-| Requirement | Measured result in canonical notebook | Notebook check |
+| Requirement | Measured result / evidence | Status |
 |---|---:|---|
 | T3 Topic improvement vs baseline | `+0.858` Macro-F1 | PASS |
 | T3 Sentiment improvement vs baseline | `+0.663` Macro-F1 | PASS |
@@ -62,14 +64,22 @@
 | T7 MRR@10 | `1.000` | PASS |
 | T8 Invariance | `1.000` | PASS |
 | T8 MFT | `1.000` | PASS |
-| T9 review table | `100` review cases + 3 prioritized fixes | RASS |
-| T10 HTTP p99 | `32.907 ms` at concurrency 16 in Colab ASGI path | PASS |
+| T9 error analysis | `100` generated review cases; `20` manually reviewed errors + 3 prioritized fixes | PASS |
+| T10 HTTP p99 | `27.903 ms` at concurrency 16 using real HTTP on local CPU | PASS |
 | T11 FastAPI | `/health`, `/v1/classify`, ar/en, invalid input, PII canary | PASS |
 | T12 measured extension | `+0.88` Top-1 delta | PASS |
 
 ### Important benchmark boundary
 
-قياس HTTP أعلاه تم داخل Colab عبر FastAPI + ASGI transport. إذا كان التقييم الرسمي يشترط **lab CPU** تحديدًا، فيجب إعادة T10 على تلك البيئة قبل الادعاء بأن حد CPU الرسمي تحقق.
+The final real-HTTP CPU benchmark was executed locally on Windows with 8 logical CPUs at concurrency 16.
+
+Measured HTTP p99:
+
+`27.903 ms`
+
+This is below the project threshold of `40 ms`.
+
+The earlier Colab ASGI measurement remains a smoke measurement. If the academy requires execution on a specifically designated lab CPU, that exact hardware environment has not been independently verified.
 
 ---
 
@@ -123,10 +133,11 @@
 - bootstrap confidence intervals.
 - Invariance.
 - MFT.
-- 100-case error-review table.
+- 100-case generated error-review table.
+- 20 errors manually reviewed and categorized.
 - 3 prioritized fixes.
 
-**T9 status:** جدول تحليل الأخطاء مكوّن من 100 حالة مع تصنيف للأخطاء و3 إصلاحات مرتبة
+**T9 status:** تم إنشاء جدول من 100 حالة، ومراجعة 20 خطأ فعليًا يدويًا وتصنيفها، مع تحديد 3 إصلاحات مرتبة حسب الأولوية.
 
 ---
 
@@ -218,16 +229,15 @@ flowchart LR
 
 ---
 
-## Remaining before final release
+## Final submission status
 
-- اعتماد/توثيق T9 يدويًا إذا كان مطلوبًا حرفيًا.
-- إعادة T10 على lab CPU إذا كانت بيئة CPU الرسمية إلزامية.
-- تشغيل submission validator.
-- التحقق من المستودع في نافذة خاصة.
-- إنشاء العرض النهائي.
-- إنشاء tag النهائي فقط بعد اكتمال التحقق:
-
-`submission-v1.0`
+- Day 1–Day 4 implementation complete.
+- T9 manual error-review evidence recorded.
+- T10 real-HTTP local CPU benchmark recorded.
+- Submission validator: `BAYAN_SUBMISSION_VALIDATOR=PASS`.
+- Public GitHub repository verified in a private browser window.
+- Public Colab notebook link verified in a private browser window.
+- Final tag: `submission-v1.0`.
 
 ---
 
