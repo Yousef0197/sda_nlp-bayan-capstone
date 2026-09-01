@@ -2,7 +2,7 @@
 
 **Repository:** `Yousef0197/sda_nlp-bayan-capstone`  
 **Last updated:** 2026-09-01  
-**Training context:** Bayan — **#SDAIA**
+**Training context:** Bayan — [@SDAIAAcademy](https://github.com/SDAIAAcademy) — **#SDAIA**
 
 ## Overall status
 
@@ -232,4 +232,5 @@ The existing tag predates the latest evidence-alignment commits and therefore is
 **Reference lab CPU substitution:** ❌ NOT CLAIMED  
 **Final tag refresh:** ⏳ PENDING FINAL VALIDATION
 
+**Academy GitHub:** [@SDAIAAcademy](https://github.com/SDAIAAcademy)  
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**
