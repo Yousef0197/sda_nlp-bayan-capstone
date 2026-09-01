@@ -103,6 +103,27 @@ The numbered notebooks are the formal day-by-day lab evidence. `notebooks/bayan_
 
 All reported numbers are tied to the repository's recorded datasets, notebook outputs, reports, and documented runtime environments. This keeps each metric reproducible and auditable.
 
+## Five-minute final demo | العرض النهائي
+
+The required five-minute walkthrough can be delivered directly from repository evidence:
+
+| Segment | Evidence to show |
+|---|---|
+| 1 — problem, user and data | bilingual beneficiary-style feedback, synthetic Arabic/English data, PII-safe preprocessing |
+| 2 — Arabic + English requests | demonstrate `/v1/classify` with `تعذر تسجيل الدخول إلى البوابة` and `The bus did not arrive on time`; show `/health` and one invalid-input case |
+| 3 — one defended number | real HTTP `p99 = 27.903 ms` at concurrency `16`, from `128` measured requests after `32` warm-up requests |
+| 4 — one known error | `Q10-M04`: `How do I register for the course? for me` ranks `D05` instead of relevant `D10`; fix direction is stronger action-intent weighting and reranking robustness |
+| 5 — optimisation + extension | FP32/ONNX/INT8 benchmark ladder, then bilingual canonicalization + reranking: Top-1 `0.10 → 0.98`, delta `+0.88`, decision **ADOPT** |
+
+### Why trust the defended p99 number?
+
+- **Workload:** `128` measured real HTTP requests, concurrency `16`, after `32` warm-up requests.
+- **Metric:** p50/p95/p99 and mean are recorded; the defended number is p99.
+- **Environment:** Windows 11 CPU, 8 logical CPUs, Python `3.13.14`, Uvicorn separate localhost process.
+- **Evidence:** `reports/t10_local_cpu_http_benchmark.json` and `BENCHMARKS.md`.
+- **Commit:** use the final commit referenced by `submission-v1.0` during the presentation.
+- **Known limitation:** the benchmark describes the recorded environment and workload; it is not generalized beyond that measurement.
+
 ## Distinction evidence | أدلة التميّز
 
 The repository is prepared for the program's **Distinction** track by strengthening evidence rather than adding unrelated features:
@@ -111,7 +132,7 @@ The repository is prepared for the program's **Distinction** track by strengthen
 |---|---|
 | Evidence quality | bilingual slices, confidence intervals, behavioural tests, 108-row error analysis, preserved measured reports |
 | Software engineering | modular `src/`, dedicated `tests/`, GitHub Actions CI, submission validator, meaningful Git history |
-| Reproducibility | nine direct Colab links, pinned day requirements, explicit seeds/environments, machine-readable summary |
+| Reproducibility | nine direct Colab links, pinned day requirements, explicit seeds/environments, machine-readable summary, reproducible data SHA-256 in `DATA_CARD.md` |
 | Explanation and limits | `DECISIONS.md`, `MODEL_CARD.md`, `DATA_CARD.md`, `EVALUATION_REPORT.md`, `BENCHMARKS.md` |
 | Measured extension | same workload before/after; Top-1 `0.10 → 0.98`; delta `+0.88`; decision `ADOPT` |
 | Program/community context | SDAIA Academy attribution and direct [@SDAIAAcademy](https://github.com/SDAIAAcademy) link |
