@@ -12,11 +12,24 @@
 
 ## Evaluation overview
 
-يوثّق هذا التقرير نتائج التقييم النهائي للمهام الرئيسية في المشروع بعد تشغيل الـNotebook المرجعي:
+يوثّق هذا التقرير نتائج التقييم النهائي للمهام الرئيسية في المشروع.
+
+الدفتر المرجعي:
 
 `notebooks/bayan_capstone.ipynb`
 
-جميع النتائج الواردة هنا ناتجة من تشغيل المشروع فعليًا.
+تم الحفاظ على نتائج التشغيل الكامل للـNotebook، مع إضافة أدلة T9 وT10 النهائية الموثقة داخل المستودع.
+
+أدلة T9:
+
+- `reports/T9_MANUAL_REVIEW.md`
+- `reports/t9_manual_error_review.csv`
+
+دليل T10:
+
+- `reports/t10_local_cpu_http_benchmark.json`
+
+جميع البيانات المستخدمة في المشروع تعليمية اصطناعية، ولا تُقدَّم النتائج بوصفها بديلًا عن أي Frozen Evaluation رسمي مستقل قد تعلنه الأكاديمية.
 
 ---
 
@@ -90,6 +103,7 @@
 - MRR@10: `1.000`
 
 **Thresholds:**
+
 - Recall@10 ≥ `0.80`
 - MRR@10 ≥ `0.70`
 
@@ -105,6 +119,7 @@
 - MFT: `1.000`
 
 **Thresholds:**
+
 - Invariance ≥ `0.95`
 - MFT ≥ `0.90`
 
@@ -114,7 +129,26 @@
 
 ## T9 — Error Analysis
 
-تم تحليل `100` حالة ضمن جدول تحليل الأخطاء، مع تصنيف الحالات وتحديد ثلاثة إصلاحات مرتبة حسب الأولوية.
+تم إنشاء جدول من `100` حالة للمراجعة ضمن مسار تحليل الأخطاء.
+
+تمت مراجعة `20` خطأ فعليًا يدويًا وتصنيفها.
+
+نتيجة المراجعة اليدوية:
+
+- candidate_ordering: `12`
+- cross_language_lexical_gap: `5`
+- normalization_drift: `3`
+
+كما تم تحديد ثلاثة إصلاحات مرتبة حسب الأولوية:
+
+1. bilingual concept canonicalization before embedding.
+2. FAISS candidate retrieval + reranking.
+3. unified train/eval/serve Arabic profile.
+
+الأدلة:
+
+- `reports/T9_MANUAL_REVIEW.md`
+- `reports/t9_manual_error_review.csv`
 
 **Status:** ✅ PASS
 
@@ -122,14 +156,35 @@
 
 ## T10 — Performance Benchmark
 
-### Result
+### Final real-HTTP local CPU result
 
+- Environment: Windows local CPU
+- Logical CPUs: `8`
 - Concurrency: `16`
-- HTTP p99: `32.907 ms`
+- Warm-up requests: `32`
+- Measured requests: `128`
+- HTTP p50: `19.172 ms`
+- HTTP p95: `24.805 ms`
+- HTTP p99: `27.903 ms`
+- HTTP mean: `18.340 ms`
 
-**Threshold:** ≤ `40 ms`
+**Threshold:** HTTP p99 ≤ `40 ms` at concurrency `16`
+
+**Measured:** `27.903 ms`
+
+**Evidence:**
+
+`reports/t10_local_cpu_http_benchmark.json`
 
 **Status:** ✅ PASS
+
+### Benchmark boundary
+
+هذا القياس هو real HTTP benchmark منفذ على CPU محلي بنظام Windows.
+
+القياس السابق داخل Colab عبر ASGI كان smoke measurement فقط ولا يُستخدم بوصفه نتيجة T10 النهائية.
+
+إذا كانت الأكاديمية تشترط جهاز lab CPU محددًا بالاسم أو المواصفات، فلا يُدَّعى أن الجهاز المحلي هو ذلك الجهاز بعينه.
 
 ---
 
@@ -180,17 +235,31 @@ Bilingual concept canonicalization + reranking
 | T7 MRR@10 | `1.000` | ✅ PASS |
 | T8 Invariance | `1.000` | ✅ PASS |
 | T8 MFT | `1.000` | ✅ PASS |
-| T9 Error analysis | `100` cases | ✅ PASS |
-| T10 HTTP p99 | `32.907 ms` | ✅ PASS |
+| T9 Error analysis | `100` generated cases; `20` manually reviewed errors | ✅ PASS |
+| T10 HTTP p99 | `27.903 ms` real HTTP, local CPU, concurrency `16` | ✅ PASS |
 | T11 FastAPI | Complete | ✅ PASS |
 | T12 Extension | `+0.88` | ✅ PASS |
+
+---
+
+## Evidence interpretation
+
+- `MEASURED_SMOKE=True`
+- `TEST_USED_FOR_SELECTION=False`
+- `ACADEMY_FROZEN_EVAL_REPLACED=False`
+
+الأرقام المرتفعة في الحزم التعليمية الاصطناعية لا تعني جودة إنتاجية مماثلة على بيانات واقعية غير مرئية.
 
 ---
 
 ## Final status
 
 **Evaluation:** ✅ COMPLETE  
-**All documented threshold checks:** ✅ PASS  
+**Documented threshold checks:** ✅ PASS  
+**T9 manual-review evidence:** ✅ RECORDED  
+**T10 real-HTTP local CPU evidence:** ✅ RECORDED  
+**Submission validator:** `BAYAN_SUBMISSION_VALIDATOR=PASS`  
+**Final tag:** `submission-v1.0`
 
 `BAYAN_DAY1_DAY4_OFFICIAL_THRESHOLDS=PASS`
 
