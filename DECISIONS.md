@@ -2,7 +2,7 @@
 
 يوثّق هذا الملف القرارات الهندسية النهائية لمشروع **Bayan — Bilingual Applied NLP Capstone** مع ربط القرار بالدليل وحدود الادعاء المطلوبة في البرنامج.
 
-**Training context:** Bayan — **#SDAIA**
+**Training context:** Bayan — [@SDAIAAcademy](https://github.com/SDAIAAcademy) — **#SDAIA**
 
 ## Evidence vocabulary
 
@@ -344,4 +344,5 @@ Final freeze sequence:
 **Reference-lab substitution:** NOT CLAIMED  
 **Final release tag:** REFRESH AFTER FINAL VALIDATION
 
+**Academy GitHub:** [@SDAIAAcademy](https://github.com/SDAIAAcademy)  
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**
