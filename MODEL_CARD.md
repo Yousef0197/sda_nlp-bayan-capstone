@@ -1,7 +1,7 @@
 # MODEL_CARD — Bayan
 
 **Project:** Bayan — Bilingual Applied NLP Capstone  
-**Training context:** Bayan — **#SDAIA**
+**Training context:** Bayan — [@SDAIAAcademy](https://github.com/SDAIAAcademy) — **#SDAIA**
 
 ## System overview
 
@@ -285,4 +285,5 @@ Required submission files, numbered notebooks, source modules, tests, reports an
 **Evidence documentation:** ✅ ALIGNED  
 **Final tag refresh:** ⏳ PENDING FINAL VALIDATION
 
+**Academy GitHub:** [@SDAIAAcademy](https://github.com/SDAIAAcademy)  
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**
