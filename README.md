@@ -10,7 +10,6 @@
 **Academy:** [@SDAIAAcademy](https://github.com/SDAIAAcademy) — أكاديمية سدايا — **#SDAIA**  
 **Instructor:** Meaad Al-Marri | ميعاد المري  
 **Submission status:** ✅ **COMPLETE / SUBMISSION READY**  
-**Target track:** **Distinction (90+)**
 
 ## Project overview | نظرة عامة
 
