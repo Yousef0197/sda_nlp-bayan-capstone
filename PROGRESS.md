@@ -2,18 +2,16 @@
 
 **Repository:** `Yousef0197/sda_nlp-bayan-capstone`  
 **Last updated:** 2026-09-01  
-**Canonical notebook:** `notebooks/bayan_capstone.ipynb`  
-**Final tag:** `submission-v1.0`
-
-> **Training context / سياق التدريب:** Bayan — **#SDAIA**
-
----
+**Training context:** Bayan — **#SDAIA**
 
 ## Overall status
 
-**BAYAN CAPSTONE — COMPLETE**
+**Implementation:** ✅ COMPLETE  
+**Repository evidence alignment:** ✅ COMPLETE  
+**Final release tag refresh:** ⏳ PENDING AFTER FINAL CI/VALIDATION  
+**Academy frozen package / reference lab hardware:** external evidence boundary; not replaced or invented.
 
-جميع متطلبات المشروع الموثقة في هذا المستودع مكتملة، بما في ذلك التنفيذ، التقييم، تحليل الأخطاء، الخدمة، القياس، الامتداد المقاس، التوثيق، التحقق، الوصول العام، والعرض النهائي.
+The repository is implementation-complete. Where the program requires an academy-frozen dataset or a designated reference CPU, this project records readiness and local/smoke evidence without claiming that unavailable external evidence was executed.
 
 ---
 
@@ -21,253 +19,217 @@
 
 | Gate | Status | Evidence |
 |---|---|---|
-| Gate A — ingest | ✅ COMPLETE | preprocessing, PII masking, tokenizer, embeddings, attention |
-| Gate B — tasks | ✅ COMPLETE | classification, sentiment, NER, QA; notebook threshold checks pass |
-| Gate C — search & truth | ✅ COMPLETE | FAISS, Recall/MRR, slices, CIs, invariance, MFT, 100 generated review cases, 20 manually reviewed errors, 3 prioritized fixes |
-| Gate D — ship | ✅ COMPLETE | FastAPI, parity, benchmark ladder, real-HTTP local CPU benchmark, measured extension |
-| Gate E — submit | ✅ COMPLETE | validator PASS, public GitHub verified, public Colab verified, final tag, presentation complete |
+| Gate A — ingest | ✅ COMPLETE | preprocessing, PII masking, tokenizer decision, embeddings, attention |
+| Gate B — tasks | ✅ COMPLETE | classification, sentiment, NER, QA code paths and measured smoke evidence |
+| Gate C — search & truth | ✅ COMPLETE WITH REVIEW BOUNDARY | multilingual embeddings, FAISS, CrossEncoder in Notebook 06, slices/CIs, invariance/MFT, 108 AI-assisted row-by-row reviewed baseline errors, 3 fixes |
+| Gate D — ship | ✅ IMPLEMENTED / LOCAL EVIDENCE RECORDED | Notebook 08 benchmark ladder, FastAPI, canaries, rollback path, local real-HTTP CPU evidence; reference lab CPU not claimed |
+| Gate E — submit | ⏳ FINAL FREEZE PENDING | validator contract present, public repository, 9 notebook links documented; refresh `submission-v1.0` after final CI/validation |
 
 ---
 
-## Canonical notebook results
+## R1–R7 alignment
 
-نتائج التشغيل المرجعي على Google Colab T4:
+### R1 — Processing and privacy
+
+- versioned preprocessing modules are present under `src/bayan/`;
+- PII masking is covered by tests and canaries;
+- train/eval/serve consistency is documented;
+- startup manifest/canary helpers are present.
+
+**Status:** ✅ implementation/evidence ready.  
+**Boundary:** academy-prescribed canary package, if separately supplied, must be run on that package before an official frozen-evaluation claim.
+
+### R2 — Models
+
+The project contains:
+
+- TF-IDF baseline;
+- multilingual Transformer training path;
+- entity-level NER alignment/evaluation;
+- extractive QA with no-answer logic.
+
+Integration smoke values:
 
 - Topic delta: `+0.858`
 - Sentiment delta: `+0.663`
 - NER entity F1: `1.000`
 - QA no-answer: `20/20`
+
+**Status:** ✅ code paths complete; values are `MEASURED_SMOKE`, not a substitute for an academy-frozen batch.
+
+### R3 — Semantic search
+
+The formal Day 3 lab notebook `notebooks/06_semantic_search.ipynb` includes:
+
+- `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`;
+- L2 normalisation;
+- FAISS `IndexFlatIP`;
+- `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` reranking on retrieved candidates;
+- Recall/MRR and cross-lingual evaluation.
+
+The integration notebook uses a deterministic lightweight reranking path for its reproducible smoke suite.
+
+Integration smoke:
+
 - Recall@10: `1.000`
 - MRR@10: `1.000`
-- Invariance: `1.000`
-- MFT: `1.000`
-- Colab ASGI HTTP p99 smoke: `32.907 ms` at concurrency `16`
-- Extension delta: `+0.88`
-- Final marker: `BAYAN_DAY1_DAY4_OFFICIAL_THRESHOLDS=PASS`
 
-كما يسجل الدفتر:
+**Status:** ✅ full lab architecture present; smoke metrics recorded.
 
-- `MEASURED_SMOKE=True`
-- `TEST_USED_FOR_SELECTION=False`
-- `ACADEMY_FROZEN_EVAL_REPLACED=False`
+### R4 — Evaluation and error analysis
 
-**Canonical notebook status:** ✅ COMPLETE
+- Invariance: `1.000` (`MEASURED_SMOKE`)
+- MFT: `1.000` (`MEASURED_SMOKE`)
+- reviewed baseline errors: `108`
+- improved system correct on reviewed baseline errors: `106/108`
+- top-3 fixes documented.
 
----
-
-## T9 — Manual error review
-
-تم إنشاء جدول من `100` حالة للمراجعة.
-
-تمت مراجعة `20` خطأ فعليًا يدويًا وتصنيفها.
-
-### Manual review categories
-
-- candidate_ordering: `12`
-- cross_language_lexical_gap: `5`
-- normalization_drift: `3`
-
-### Prioritized fixes
-
-1. bilingual concept canonicalization before embedding.
-2. FAISS candidate retrieval + reranking.
-3. unified train/eval/serve Arabic profile.
-
-### Evidence
+Review evidence:
 
 - `reports/T9_MANUAL_REVIEW.md`
 - `reports/t9_manual_error_review.csv`
 
-**T9 status:** ✅ COMPLETE
+**Reviewer boundary:** the 108 rows were reviewed individually by GPT-5.6 Sol. This is AI-assisted semantic review and is not labelled as independent human review.
+
+`T9_HUMAN_REVIEW_CLAIM=FALSE`
+
+**Status:** ✅ 108-row review evidence exists; if the rubric requires a learner/instructor human reviewer specifically, that final confirmation remains a human action.
+
+### R5 — Serving and performance
+
+Formal Notebook 08 contains the benchmark ladder and schemas for:
+
+- warm-up and repeated measurements;
+- p50/p95/p99;
+- throughput;
+- approximate process RSS/observed peak;
+- FP32 reference and rollback;
+- ONNX/ORT and INT8 candidate path;
+- quality tax;
+- FastAPI contract and canaries.
+
+Additional real-HTTP local CPU evidence:
+
+- concurrency: `16`
+- warm-up: `32`
+- measured requests: `128`
+- p50: `19.172 ms`
+- p95: `24.805 ms`
+- p99: `27.903 ms`
+- mean: `18.340 ms`
+
+Evidence: `reports/t10_local_cpu_http_benchmark.json`.
+
+**Status:** ✅ local evidence complete; academy reference lab CPU is not claimed or substituted.
+
+### R6 — Architectural literacy
+
+Documented evidence includes:
+
+- mBERT fertility: Arabic `2.595`, English `1.299`;
+- AraBERT fertility: Arabic `1.182`, English `3.714`;
+- bilingual tokenizer/checkpoint rationale;
+- truncation measurement and risk;
+- attention score shape and quadratic sequence-length cost;
+- mask semantics;
+- bilingual slice evidence.
+
+See `reports/day1_report.md` and `DECISIONS.md`.
+
+**Status:** ✅ COMPLETE.
+
+### R7 — Hygiene, reproducibility, extension
+
+- `TEST_USED_FOR_SELECTION=False`
+- `ACADEMY_FROZEN_EVAL_REPLACED=False`
+- no committed weights/checkpoints/secrets;
+- validator contract present;
+- measured extension: Top-1 delta `+0.88`;
+- release decision normalized to `ADOPT`.
+
+**Status:** ✅ implementation/evidence complete; refresh final tag after final validated commit.
 
 ---
 
-## T10 — Performance benchmark
+## T9 — 108-row error review
 
-تم تنفيذ قياس real HTTP على CPU محلي.
+Manual semantic categories used in the AI-assisted review:
 
-### Environment
+| Category | Count |
+|---|---:|
+| cross_language_intent_specificity_gap | `56` |
+| hash_collision_candidate_ordering | `44` |
+| modifier_noise_ranking_instability | `8` |
 
-- Platform: Windows 11
-- CPU count: `8`
-- Concurrency: `16`
-- Warm-up requests: `32`
-- Measured requests: `128`
+Residual improved-system errors: `2`.
 
-### Results
+Prioritized fixes:
 
-- HTTP p50: `19.172 ms`
-- HTTP p95: `24.805 ms`
-- HTTP p99: `27.903 ms`
-- HTTP mean: `18.340 ms`
+1. keep bilingual concept canonicalization before embedding;
+2. strengthen/replace hashed lexical candidate representation;
+3. harden reranking against low-information modifiers.
 
-### Threshold
-
-`HTTP p99 <= 40 ms` at concurrency `16`
-
-### Result
-
-`T10_LOCAL_CPU_HTTP_TARGET_MET=True`
-
-`T10_LOCAL_CPU_HTTP_BENCHMARK=PASS`
-
-### Evidence
-
-`reports/t10_local_cpu_http_benchmark.json`
-
-**T10 status:** ✅ COMPLETE
-
-### Environment boundary
-
-القياس النهائي تم على CPU محلي بنظام Windows.
-
-لا يُنسب هذا الجهاز إلى academy lab CPU محدد ما لم تكن الأكاديمية قد عرّفت البيئة نفسها بهذه المواصفات.
-
-هذه الملاحظة توثّق بيئة القياس ولا تغيّر حالة إنجاز المشروع.
+**T9 evidence status:** ✅ RECORDED  
+**Independent human-review claim:** ❌ NOT MADE
 
 ---
 
-## T11 — FastAPI
+## T10 — local real-HTTP evidence
 
-تم اختبار وتوثيق:
+Environment:
 
-- `GET /health`
-- `POST /v1/classify`
-- Arabic input
-- English input
-- invalid input
-- startup/API canaries
-- PII masking
+- Windows 11
+- 8 logical CPUs
+- concurrency `16`
+- warm-up `32`
+- measured requests `128`
 
-**T11 status:** ✅ COMPLETE
+Result:
+
+`HTTP p99 = 27.903 ms`
+
+This local value is below the program numeric target of `40 ms`, but official R5 attribution still depends on the program-designated reference machine when such hardware is required.
 
 ---
 
-## T12 — Measured extension
+## Extension decision consistency
 
-**Extension:**
+The integration notebook originally prints the decision label `KEEP` for a positive extension delta. Documentation uses the release vocabulary `ADOPT` for the same positive measured decision.
 
-Bilingual concept canonicalization + reranking
-
-**Measured result:**
+Measured result:
 
 `Top-1 delta = +0.88`
 
-**Decision:**
+Release decision:
 
 `ADOPT`
 
-**T12 status:** ✅ PASS
-
-تم اعتماد الامتداد بعد القياس لأن المقارنة قبل/بعد أظهرت تحسنًا موجبًا في Top-1 بمقدار `+0.88`.
-
-**Implementation:** ✅ COMPLETE
+There is no semantic conflict: `KEEP` in the notebook means retain the candidate; `ADOPT` is the normalized documentation label.
 
 ---
 
-## Submission validation
+## Validation and release
 
-تم تشغيل الـsubmission validator من Fresh Clone مأخوذ من الوسم النهائي.
+The repository includes the required validator and submission contracts.
 
-النتيجة:
+Current release policy:
 
-`BAYAN_SUBMISSION_VALIDATOR=PASS`
+1. latest `main` must pass repository tests and the submission validator;
+2. then `submission-v1.0` must be refreshed to point at that final validated commit;
+3. run the validator again with `--require-tag` from a fresh clone.
 
-الفحوص التي اجتازت:
-
-- Required project structure.
-- Nine valid notebooks and Core markers.
-- `PROJECT_SUMMARY.json` contract.
-- `SUBMISSION.yml` contract.
-- No forbidden or oversized tracked artefacts.
-- Final Git tag `submission-v1.0`.
-
-**Validation status:** ✅ COMPLETE
+The existing tag predates the latest evidence-alignment commits and therefore is not treated as the final frozen commit until refreshed.
 
 ---
 
-## Public access verification
-
-تم التحقق يدويًا من نافذة خاصة من:
-
-- المستودع العام على GitHub.
-- رابط الـcanonical notebook في Google Colab.
-
-رابط Colab:
-
-https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/bayan_capstone.ipynb
-
-**Public access status:** ✅ COMPLETE
-
----
-
-## Presentation
-
-تم تجهيز العرض النهائي للمشروع واستكمال متطلب العرض.
-
-**Presentation status:** ✅ COMPLETE
-
----
-
-## Documentation
-
-ملفات التوثيق الأساسية:
-
-- `README.md`
-- `DATA_CARD.md`
-- `MODEL_CARD.md`
-- `EVALUATION_REPORT.md`
-- `BENCHMARKS.md`
-- `DECISIONS.md`
-- `PROGRESS.md`
-- `PROJECT_SUMMARY.json`
-- `SUBMISSION.yml`
-
-**Documentation status:** ✅ COMPLETE
-
----
-
-## Release
-
-وسم الإصدار النهائي:
-
-`submission-v1.0`
-
-**Release status:** ✅ COMPLETE
-
----
-
-## Evidence interpretation
-
-`MEASURED_SMOKE=True`
-
-تعني أن نتائج الـcanonical notebook ناتجة من تشغيل فعلي للحزم التعليمية الاصطناعية.
-
-`ACADEMY_FROZEN_EVAL_REPLACED=False`
-
-تعني أن الحزم التعليمية لا تدّعي استبدال أي Frozen Evaluation رسمي مستقل.
-
-نتيجة T10 النهائية `27.903 ms` مصدرها قياس real HTTP محلي منفصل وموثق في `reports/`.
-
-هذه الحدود التفسيرية لا تعني وجود متطلبات مشروع غير مكتملة.
-
----
-
-## Final project status
+## Final state
 
 **Implementation:** ✅ COMPLETE  
-**Evaluation:** ✅ COMPLETE  
-**T9 Manual Review:** ✅ COMPLETE  
-**T10 Benchmark:** ✅ COMPLETE  
-**FastAPI Serving:** ✅ COMPLETE  
-**Measured Extension:** ✅ COMPLETE  
-**Documentation:** ✅ COMPLETE  
-**Validation:** ✅ COMPLETE  
-**Public Access:** ✅ COMPLETE  
-**Presentation:** ✅ COMPLETE  
-**Release:** ✅ COMPLETE  
-**Submission:** ✅ COMPLETE
-
-**BAYAN CAPSTONE — FINAL SUBMISSION COMPLETE**
+**Documentation:** ✅ ALIGNED  
+**Measured smoke/local evidence:** ✅ RECORDED  
+**T9 AI-assisted 108-row review:** ✅ COMPLETE  
+**Official frozen-evaluation substitution:** ❌ NOT CLAIMED  
+**Reference lab CPU substitution:** ❌ NOT CLAIMED  
+**Final tag refresh:** ⏳ PENDING FINAL VALIDATION
 
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**

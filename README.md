@@ -1,257 +1,204 @@
 # Bayan — Bilingual Applied NLP Capstone
 
-مشروع تطبيقي ثنائي اللغة في معالجة اللغة الطبيعية، مبني ضمن مسار **Bayan** ويغطي مختبرات الأيام الأربعة في Notebook موحّد قابل لإعادة التشغيل.
+[![Tests](https://github.com/Yousef0197/sda_nlp-bayan-capstone/actions/workflows/tests.yml/badge.svg)](https://github.com/Yousef0197/sda_nlp-bayan-capstone/actions/workflows/tests.yml)
+
+مشروع تطبيقي ثنائي اللغة في معالجة اللغة الطبيعية ضمن برنامج **SDA-AIE-211 — Natural Language Processing with Transformers**.
 
 **Student:** Yousef Al-Mutiri  
 **Repository:** `Yousef0197/sda_nlp-bayan-capstone`  
-**Canonical notebook:** `notebooks/bayan_capstone.ipynb`  
-**Open in Colab:** https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/bayan_capstone.ipynb
+**Academy:** أكاديمية سدايا — **#SDAIA**  
+**Instructor:** Meaad Al-Marri | ميعاد المري
 
-**Status:** Day 1–Day 4 implementation complete; final submission validated and tagged as `submission-v1.0`.
+## Evidence status
 
-> **Program / البرنامج:** SDA-AIE-211 — Natural Language Processing with Transformers  
-> **Instructor / المدربة:** Meaad Al-Marri | ميعاد المري  
-> **Academy / الأكاديمية:** [@SDAIAAcademy](https://github.com/SDAIAAcademy) — أكاديمية سدايا
+**Implementation:** COMPLETE  
+**Repository evidence:** COMPLETE / scoped honestly  
+**Academy frozen evaluation:** NOT REPLACED  
+**Reference lab hardware:** NOT CLAIMED  
+**Release:** refresh `submission-v1.0` only after the latest `main` passes validation.
 
----
-
-## Executive summary | الملخص
-
-يبني مشروع **Bayan** خط معالجة ثنائي اللغة للعربية والإنجليزية يشمل:
-
-- حماية البيانات ومعالجة النصوص.
-- Tokenization وTransformer literacy.
-- تصنيف الموضوع والمشاعر.
-- NER.
-- Extractive QA.
-- بحثًا دلاليًا باستخدام FAISS.
-- تقييمًا سلوكيًا وشرائح وثقة.
-- تحليل أخطاء.
-- Benchmark وخدمة FastAPI.
-- امتدادًا مقاسًا قبل/بعد.
-
-جميع بيانات التطوير والتقييم داخل الـNotebook **تعليمية اصطناعية** وليست بيانات مستفيدين حقيقية أو بيانات حكومية حساسة.
-
----
-
-## Canonical clean run | التشغيل الكامل
-
-الدفتر الرئيسي:
-
-`notebooks/bayan_capstone.ipynb`
-
-تم تشغيله من البداية إلى النهاية في Google Colab على T4 دون أخطاء، وانتهى بالعلامة:
-
-`BAYAN_DAY1_DAY4_OFFICIAL_THRESHOLDS=PASS`
-
-مع:
-
-- `MEASURED_SMOKE=True`
-- `TEST_USED_FOR_SELECTION=False`
-- `ACADEMY_FROZEN_EVAL_REPLACED=False`
-
-النتائج أدناه تجمع بين نتائج التشغيل الكامل للـNotebook على بيئة Colab والأدلة المقاسة الإضافية الموثقة داخل المستودع، مع توضيح بيئة كل قياس.
-
----
-
-## Measured results | النتائج المقاسة
-
-| Requirement | Measured result / evidence | Status |
-|---|---:|---|
-| T3 Topic improvement vs baseline | `+0.858` Macro-F1 | PASS |
-| T3 Sentiment improvement vs baseline | `+0.663` Macro-F1 | PASS |
-| T4 NER entity-level F1 | `1.000` | PASS |
-| T5 QA no-answer | `20/20` | PASS |
-| T7 Recall@10 | `1.000` | PASS |
-| T7 MRR@10 | `1.000` | PASS |
-| T8 Invariance | `1.000` | PASS |
-| T8 MFT | `1.000` | PASS |
-| T9 error analysis | `100` generated review cases; `20` manually reviewed errors + 3 prioritized fixes | PASS |
-| T10 HTTP p99 | `27.903 ms` at concurrency 16 using real HTTP on local CPU | PASS |
-| T11 FastAPI | `/health`, `/v1/classify`, ar/en, invalid input, PII canary | PASS |
-| T12 measured extension | `+0.88` Top-1 delta | PASS |
-
-### Important benchmark boundary
-
-The final real-HTTP CPU benchmark was executed locally on Windows with 8 logical CPUs at concurrency 16.
-
-Measured HTTP p99:
-
-`27.903 ms`
-
-This is below the project threshold of `40 ms`.
-
-The earlier Colab ASGI measurement remains a smoke measurement. If the academy requires execution on a specifically designated lab CPU, that exact hardware environment has not been independently verified.
-
----
-
-## Day 1 — Text processing & transformers
-
-يشمل:
-
-- Unicode inspection.
-- PII masking.
-- معالجة عربية موحّدة.
-- token fertility.
-- truncation.
-- contextual embeddings.
-- scaled dot-product attention.
-- padding-mask semantics.
-
----
-
-## Day 2 — Applied NLP tasks
-
-### Topic & sentiment
-
-- TF-IDF baseline.
-- Transformer training path.
-- مقارنة Macro-F1 قابلة للقياس.
-
-### NER
-
-- `word_ids()`.
-- `-100` للـspecial tokens والـcontinuation subwords.
-- optimizer step.
-- entity-level precision/recall/F1.
-
-### Extractive QA
-
-- start/end position preparation.
-- valid-span constraints.
-- no-answer handling.
-- اختبار 20 حالة no-answer.
-
----
-
-## Day 3 — Search & evaluation
-
-- unified train/eval/serve Arabic profile.
-- Arabic canaries.
-- FAISS manifest.
-- retrieve + rerank.
-- Recall@10 / MRR@10.
-- Arabic/English slices.
-- bootstrap confidence intervals.
-- Invariance.
-- MFT.
-- 100-case generated error-review table.
-- 20 errors manually reviewed and categorized.
-- 3 prioritized fixes.
-
-**T9 status:** تم إنشاء جدول من 100 حالة، ومراجعة 20 خطأ فعليًا يدويًا وتصنيفها، مع تحديد 3 إصلاحات مرتبة حسب الأولوية.
-
----
-
-## Day 4 — Serving & measured extension
-
-- benchmark ladder.
-- parity check.
-- FastAPI service.
-- `/health`.
-- `/v1/classify`.
-- Arabic/English requests.
-- invalid-input handling.
-- startup/API canaries.
-- concurrency 16 benchmark.
-- measured bilingual retrieval extension.
-
-### Extension decision
-
-تم قياس bilingual concept canonicalization + reranking قبل/بعد.
-
-النتيجة:
-
-`Top-1 delta = +0.88`
-
-القرار:
-
-`ADOPT`
-
-الحالة:
-
-`PASS`
+> نتائج الدفاتر التعليمية الصغيرة هي `MEASURED_SMOKE`. هي تثبت أن مسارات المشروع تعمل وتسمح بتدقيق المنهج والكود، لكنها لا تُقدَّم على أنها بديل لحزمة تقييم مجمدة أو جهاز مختبر مرجعي تعلنه الأكاديمية.
 
 ---
 
 ## Architecture | المعمارية
 
 ```mermaid
-flowchart LR
-    A["Arabic / English educational text"] --> B["PII masking + preprocessing"]
-    B --> C["Tokenizer"]
-    C --> D["Topic / Sentiment"]
-    C --> E["NER"]
-    C --> F["Extractive QA"]
-    B --> G["Embeddings"]
-    G --> H["FAISS + re-ranking"]
-    D --> I["Evaluation"]
+flowchart TD
+    A["Arabic / English text"] --> B["PII masking + versioned preprocessing"]
+    B --> C["Topic + Sentiment"]
+    B --> D["NER"]
+    B --> E["Extractive QA"]
+    B --> F["Sentence embeddings"]
+    F --> G["FAISS candidate retrieval"]
+    G --> H["CrossEncoder re-ranking"]
+    C --> I["Unified evaluation"]
+    D --> I
     E --> I
-    F --> I
     H --> I
-    I --> J["Slices + behavioural tests + errors"]
-    J --> K["Benchmark"]
-    K --> L["FastAPI"]
+    I --> J["Slices + behavioural tests + error analysis"]
+    J --> K["Benchmark + FastAPI"]
 ```
+
+The numbered course notebooks are the full lab evidence. `notebooks/bayan_capstone.ipynb` is an additional integration notebook used for a clean Day 1–Day 4 smoke run; it does not replace the fuller numbered notebooks.
+
+In particular, `notebooks/06_semantic_search.ipynb` contains the required sentence-embedding → FAISS → **CrossEncoder** re-ranking path. The integration notebook uses a lighter deterministic bilingual canonicalization/reranking path for its reproducible smoke suite.
 
 ---
 
-## Privacy & responsible use
+## Required notebooks + Colab
 
-- لا تُستخدم بيانات شخصية حقيقية.
-- أمثلة الهاتف والبريد مصطنعة لاختبار masking.
-- لا توجد مفاتيح API في المستودع.
-- لا تُرفع `.env`.
-- لا تُرفع model weights أو checkpoints أو caches.
-- لا يُعد المشروع نظامًا إنتاجيًا لاتخاذ قرارات عالية الأثر.
-- النتائج المقاسة على البيانات الاصطناعية لا تعني جودة مماثلة على بيانات واقعية غير مرئية.
+| Notebook | Colab |
+|---|---|
+| `00_runtime_doctor.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/00_runtime_doctor.ipynb) |
+| `01_text_processing_tokenization.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/01_text_processing_tokenization.ipynb) |
+| `02_attention_transformers.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/02_attention_transformers.ipynb) |
+| `03_text_classification.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/03_text_classification.ipynb) |
+| `04_ner_and_qa.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/04_ner_and_qa.ipynb) |
+| `05_arabic_nlp.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/05_arabic_nlp.ipynb) |
+| `06_semantic_search.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/06_semantic_search.ipynb) |
+| `07_evaluation_error_analysis.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/07_evaluation_error_analysis.ipynb) |
+| `08_optimization_serving.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/08_optimization_serving.ipynb) |
+| Integration notebook `bayan_capstone.ipynb` | [Open](https://colab.research.google.com/github/Yousef0197/sda_nlp-bayan-capstone/blob/main/notebooks/bayan_capstone.ipynb) |
+
+---
+
+## Program requirements R1–R7
+
+| Requirement | Repository evidence | Current interpretation |
+|---|---|---|
+| R1 — preprocessing/privacy | versioned preprocessing modules, PII masking, train/eval/serve contract, canaries and tests | implementation/evidence ready; official batch canaries depend on academy package |
+| R2 — models | TF-IDF baseline, multilingual Transformer path, entity-level NER, extractive QA/no-answer | smoke metrics recorded; no claim that smoke replaces frozen evaluation |
+| R3 — search | multilingual SentenceTransformer, L2 + FAISS `IndexFlatIP`, CrossEncoder reranking in Notebook 06, Recall/MRR and cross-lingual analysis | full lab path present; smoke metrics recorded |
+| R4 — evaluation | language slices, bootstrap CI, invariance/MFT, 108 row-by-row reviewed baseline errors, top-3 fixes | AI-assisted semantic review complete; `T9_HUMAN_REVIEW_CLAIM=FALSE` |
+| R5 — serving/performance | Notebook 08 benchmark ladder, FP32/ONNX/INT8/rollback path, FastAPI, local real-HTTP benchmark at concurrency 16 | local CPU evidence recorded; academy lab CPU is not claimed |
+| R6 — architectural literacy | tokenizer fertility/truncation evidence, checkpoint rationale, attention limits, slice evidence, decisions | documented in `DECISIONS.md` and Day 1 report |
+| R7 — hygiene/extension | frozen-test boundary, reproducibility, validator, no weights/secrets, measured extension | repository evidence complete; final tag must be refreshed after final validation |
+
+---
+
+## Measured evidence
+
+### Integration smoke suite
+
+The integration notebook recorded:
+
+| Area | Result | Evidence class |
+|---|---:|---|
+| Topic delta vs baseline | `+0.858` Macro-F1 | `MEASURED_SMOKE` |
+| Sentiment delta vs baseline | `+0.663` Macro-F1 | `MEASURED_SMOKE` |
+| NER entity F1 | `1.000` | `MEASURED_SMOKE` |
+| QA no-answer | `20/20` | `MEASURED_SMOKE` |
+| Recall@10 | `1.000` | `MEASURED_SMOKE` |
+| MRR@10 | `1.000` | `MEASURED_SMOKE` |
+| Invariance | `1.000` | `MEASURED_SMOKE` |
+| MFT | `1.000` | `MEASURED_SMOKE` |
+| Extension Top-1 delta | `+0.88` | `MEASURED_SMOKE` |
+
+The notebook also records:
+
+`MEASURED_SMOKE=True`  
+`TEST_USED_FOR_SELECTION=False`  
+`ACADEMY_FROZEN_EVAL_REPLACED=False`
+
+The printed marker `BAYAN_DAY1_DAY4_OFFICIAL_THRESHOLDS=PASS` is interpreted only as “the included smoke suites meet the numeric threshold values”; it is **not** presented as proof that an unavailable academy-frozen package was passed.
+
+### T9 — error analysis
+
+`reports/t9_manual_error_review.csv` contains **108 actual baseline errors** reviewed row by row for semantic relevance and failure mechanism.
+
+- reviewed baseline errors: `108`
+- improved system correct on those baseline errors: `106/108`
+- residual improved errors: `2`
+- reviewer: GPT-5.6 Sol, AI-assisted row-by-row semantic review
+- human-review claim: `FALSE`
+
+Full methodology and categories: `reports/T9_MANUAL_REVIEW.md`.
+
+### T10 — real HTTP local CPU
+
+`reports/t10_local_cpu_http_benchmark.json` records:
+
+- Windows 11 local CPU
+- 8 logical CPUs
+- concurrency: `16`
+- warm-up: `32` requests
+- measured: `128` requests
+- p50: `19.172 ms`
+- p95: `24.805 ms`
+- p99: `27.903 ms`
+- mean: `18.340 ms`
+
+This is valid **local measured evidence**, but it is not labelled as the academy reference lab CPU.
+
+---
+
+## Day 1 architectural evidence
+
+The Day 1 report records tokenizer fertility on a fixed bilingual sample:
+
+| Tokenizer | Arabic fertility | English fertility |
+|---|---:|---:|
+| mBERT | `2.595` | `1.299` |
+| AraBERT | `1.182` | `3.714` |
+
+The bilingual path therefore kept a multilingual tokenizer/checkpoint family rather than optimizing only for Arabic token fertility. Attention documentation also records mask semantics, the quadratic `T × T` attention-score shape, and truncation as an explicit design risk.
+
+See `reports/day1_report.md` and `DECISIONS.md`.
 
 ---
 
 ## Reproducibility
 
-تشغيل الدفتر:
+For the integration notebook:
 
-1. افتح `notebooks/bayan_capstone.ipynb` في Colab.
-2. اختر T4 GPU إذا كان متاحًا.
-3. استخدم `Runtime → Restart session and run all`.
-4. راقب العلامة النهائية.
-5. لا تستخدم Test لاختيار seed/threshold/model.
+1. Open `notebooks/bayan_capstone.ipynb` in Colab.
+2. Restart the session.
+3. Run all cells from top to bottom.
+4. Treat outputs according to their evidence labels.
+5. Do not use the test split for repeated model/threshold selection.
+
+For the formal lab paths, run the numbered notebooks independently in order and preserve their generated small reports. Large model weights, caches and ONNX artefacts must remain outside GitHub.
+
+Local repository checks:
+
+```bash
+PYTHONPATH=src pytest -q
+PYTHONPATH=src python scripts/validate_submission.py .
+```
+
+After refreshing the final tag:
+
+```bash
+PYTHONPATH=src python scripts/validate_submission.py . --require-tag
+```
 
 ---
 
-## Repository documentation
+## Documentation
 
 - `README.md`
-- `DATA_CARD.md`
-- `MODEL_CARD.md`
-- `EVALUATION_REPORT.md`
-- `BENCHMARKS.md`
-- `DECISIONS.md`
+- `STUDENT_PROFILE.md`
 - `PROGRESS.md`
+- `DECISIONS.md`
+- `BENCHMARKS.md`
+- `EVALUATION_REPORT.md`
+- `MODEL_CARD.md`
+- `DATA_CARD.md`
 - `PROJECT_SUMMARY.json`
 - `SUBMISSION.yml`
-- `notebooks/bayan_capstone.ipynb`
 
 ---
 
-## Final submission status
+## Release integrity
 
-- Day 1–Day 4 implementation complete.
-- T9 manual error-review evidence recorded.
-- T10 real-HTTP local CPU benchmark recorded.
-- Submission validator: `BAYAN_SUBMISSION_VALIDATOR=PASS`.
-- Public GitHub repository verified in a private browser window.
-- Public Colab notebook link verified in a private browser window.
-- Final presentation complete.
-- Final tag: `submission-v1.0`.
+`submission-v1.0` already exists, but it was created before the latest evidence-alignment commits. It must be moved/recreated on the final validated `main` commit before submission is considered frozen.
 
----
+This repository intentionally distinguishes:
 
-## Acknowledgement & tags
-
-نُفذ هذا المشروع ضمن برنامج **SDA-AIE-211 — Natural Language Processing with Transformers**، بإعداد وتقديم المدربة **ميعاد المري | Meaad Al-Marri**، ضمن برامج **أكاديمية سدايا**.
-
-GitHub: [@SDAIAAcademy](https://github.com/SDAIAAcademy)
+- implementation completion,
+- measured smoke/local evidence,
+- external academy-frozen evaluation,
+- and final release/tag integrity.
 
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**

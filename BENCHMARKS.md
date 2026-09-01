@@ -1,111 +1,78 @@
 # BENCHMARKS — Bayan
 
-## Project
+**Project:** Bayan — Bilingual Applied NLP Capstone  
+**Training context:** Bayan — **#SDAIA**
 
-**Bayan — Bilingual Applied NLP Capstone**
+## Benchmark policy
 
-**Status:** ✅ COMPLETE
+The program requires benchmark evidence to include environment, warm-up, repeated measurements, tail latency, throughput, memory and quality/rollback reasoning. This repository therefore separates:
 
-**Training context:** Bayan — #SDAIA
+- the full formal benchmark ladder in `notebooks/08_optimization_serving.ipynb`;
+- the integration-notebook ASGI smoke measurement;
+- the additional real-HTTP local CPU measurement preserved in `reports/t10_local_cpu_http_benchmark.json`.
+
+No value is attributed to academy reference hardware unless that environment is actually verified.
 
 ---
 
-## Purpose
+## Formal Notebook 08 benchmark ladder
 
-يوثّق هذا الملف قياسات الأداء الخاصة بمسار Day 4، مع الفصل بين:
+`notebooks/08_optimization_serving.ipynb` implements the following measurement contract:
 
-- benchmark ladder داخل الـcanonical notebook،
-- parity / quality check،
-- قياس FastAPI عبر ASGI داخل Colab،
-- والقياس النهائي عبر real HTTP على CPU محلي.
+1. capture Python/runtime/device/library versions;
+2. record a budget before evaluating the candidate;
+3. separate `SYSTEMS_SMOKE` from `PROJECT_ARTIFACT`;
+4. warm up before measurement;
+5. use at least 30 repeated calls in the formal benchmark path;
+6. report p50/p95/p99 and throughput;
+7. measure approximate process RSS start/observed peak;
+8. audit sequence lengths and batching/padding choices;
+9. preserve a PyTorch FP32 reference;
+10. export/check ONNX and run ONNX Runtime;
+11. verify numerical/prediction parity;
+12. evaluate dynamic INT8 as a candidate rather than assuming it is better;
+13. measure quality tax;
+14. preserve an FP32 rollback/fallback path;
+15. run FastAPI and startup/service canaries.
 
-الدفتر المرجعي:
+The notebook explicitly warns that its default small model path is `SYSTEMS_SMOKE` until the learner points it to the project artefact.
 
-`notebooks/bayan_capstone.ipynb`
+---
 
-دليل القياس النهائي:
+## Integration-notebook ASGI smoke
+
+The integration notebook records:
+
+- measurement path: FastAPI + ASGI transport
+- concurrency: `16`
+- measured requests: `128`
+- HTTP p99: `32.907 ms`
+
+**Evidence class:** `MEASURED_SMOKE`.
+
+This result demonstrates the integrated service code path on the synthetic suite. It is not used as a reference-lab hardware claim.
+
+---
+
+## Real HTTP local CPU measurement
+
+Evidence file:
 
 `reports/t10_local_cpu_http_benchmark.json`
 
----
-
-## T10 requirement
-
-هدف الأداء المستخدم في المشروع:
-
-- HTTP p99 ≤ `40 ms`
-- Concurrency = `16`
-
----
-
-## Benchmark ladder
-
-يحتوي الـcanonical notebook على مسار قياس تدريجي بدل القفز مباشرة إلى HTTP:
-
-1. direct classification path.
-2. cached classification path.
-3. FastAPI / ASGI path.
-4. real HTTP service benchmark.
-
-هذا يسمح بفصل تكلفة منطق التصنيف عن تكلفة طبقة الخدمة والنقل.
-
----
-
-## Direct vs cached prediction parity
-
-يقيس الـNotebook مسارين:
-
-- `classify_direct`
-- `classify_cached`
-
-ويتحقق صراحة من تطابق المخرجات:
-
-`before_bench["outputs"] == after_bench["outputs"]`
-
-كما يسجل:
-
-`Prediction parity = 1.0`
-
-والعلامة:
-
-`DAY4_BENCHMARK_PARITY=PASS`
-
-### Quality tax interpretation
-
-على عينة الـbenchmark المستخدمة في فحص parity:
-
-- Prediction parity: `1.0`
-- Observed prediction changes: `0`
-- Observed prediction-quality tax from caching on those cases: `0`
-
-هذا لا يعني أن الجودة الإنتاجية مضمونة على بيانات خارجية؛ بل يعني فقط أن تحسين caching لم يغيّر المخرجات على حالات parity المقاسة.
-
----
-
-## Canonical notebook ASGI smoke measurement
-
-في التشغيل الكامل المرجعي للـNotebook تم تسجيل:
-
-- Concurrency: `16`
-- HTTP/ASGI p99: `32.907 ms`
-
-هذا القياس موثّق بوصفه smoke measurement داخل بيئة Colab.
-
-لا يُستخدم هذا القياس وحده للادعاء بأنه benchmark على جهاز lab CPU محدد.
-
----
-
-## Real HTTP local CPU benchmark
-
-بعد فصل طبقة الخدمة وتشغيل benchmark حقيقي عبر HTTP محلي، كانت البيئة:
+### Environment
 
 - Platform: Windows 11
-- CPU count: `8`
+- Processor family: Intel64 Family 6 Model 142
+- Logical CPUs: `8`
+- Python: `3.13.14`
+- Accelerator: CPU
+- Server: Uvicorn in a separate localhost process
 - Concurrency: `16`
 - Warm-up requests: `32`
 - Measured requests: `128`
 
-### Results
+### Measured latency
 
 | Metric | Result |
 |---|---:|
@@ -114,81 +81,88 @@
 | HTTP p99 | `27.903 ms` |
 | HTTP mean | `18.340 ms` |
 
-### Threshold check
+Local numeric target:
 
-Target:
-
-`HTTP p99 <= 40 ms`
-
-Measured:
-
-`27.903 ms`
+`HTTP p99 <= 40 ms` at concurrency `16`
 
 Result:
 
 `T10_LOCAL_CPU_HTTP_TARGET_MET=True`
 
-`T10_LOCAL_CPU_HTTP_BENCHMARK=PASS`
+**Evidence class:** `MEASURED_LOCAL`.
 
 ---
 
-## Final T10 evidence
+## Throughput and memory boundary
 
-النتيجة النهائية المستخدمة في التوثيق:
+The formal Notebook 08 benchmark schema records:
 
-**HTTP p99 = `27.903 ms` at concurrency `16` using real HTTP on local CPU.**
+- `throughput_items_s`;
+- approximate process RSS start and observed peak.
 
-الدليل القابل للفحص:
+The standalone local HTTP JSON used for the `27.903 ms` result does **not** store total wall-clock throughput or peak RSS. Therefore no throughput or memory number is invented for that specific local run.
 
-`reports/t10_local_cpu_http_benchmark.json`
-
-**Status:** ✅ PASS
-
----
-
-## Environment boundary
-
-القياس النهائي أعلاه تم على CPU محلي بنظام Windows، وليس على جهاز تم إثبات أنه جهاز academy lab CPU بعينه.
-
-إذا كانت الأكاديمية تعلن جهازًا أو بيئة lab CPU محددة إلزاميًا، فيجب إعادة القياس على تلك البيئة قبل نسب النتيجة إليها.
-
-كما أن القياسات داخل الـcanonical notebook تستخدم بيانات تعليمية اصطناعية ولا تستبدل أي Frozen Evaluation رسمي مستقل.
+For a final hardware-specific benchmark package, rerun Notebook 08 in `PROJECT_MODE=True` (or an equivalent project-artifact benchmark on the designated machine), preserve its generated small report, and attribute the numbers only to that exact environment.
 
 ---
 
-## Benchmark interpretation
+## Prediction parity and quality tax
 
-النتيجة المهمة هندسيًا هي أن منطق الخدمة نفسه ليس عنق الزجاجة في القياس المحلي النهائي، وأن مسار real HTTP على الجهاز المحلي حقق الحد المستهدف.
+The integration benchmark checks direct vs cached prediction parity and records:
 
-ويُحافظ على الفصل بين:
+`Prediction parity = 1.0`
 
-- correctness / parity،
-- service latency،
-- HTTP transport overhead،
-- والبيئة التي تم فيها القياس.
+Observed prediction changes on those measured parity cases:
+
+`0`
+
+Interpretation: caching did not change predictions on that measured suite. This is a parity statement, not a production-quality score.
+
+Notebook 08 additionally contains the full quality-tax contract for FP32 / ONNX / INT8 candidate decisions.
 
 ---
 
-## Reproducibility evidence
+## Rollback policy
 
-الملفات ذات الصلة:
+A faster candidate is not adopted solely because its file is smaller or its average latency is lower.
 
+The decision requires:
+
+- acceptable tail latency;
+- acceptable throughput;
+- parity/quality within budget;
+- startup canaries passing;
+- an FP32 reproduction/rollback path.
+
+If parity or quality fails, the safe decision is to keep/restore the FP32 reference.
+
+---
+
+## Program R5 interpretation
+
+The local real-HTTP result is below the program numeric threshold of `40 ms` at concurrency `16`.
+
+However, the formal R5 requirement ties the final claim to the academy-designated reference CPU when such a machine is specified. The repository therefore records:
+
+**Local evidence:** ✅ measured and documented  
+**Reference-lab equivalence:** ❌ not claimed without environment proof
+
+This distinction is intentional and keeps the benchmark auditable.
+
+---
+
+## Reproducibility
+
+Primary evidence:
+
+- `notebooks/08_optimization_serving.ipynb`
 - `notebooks/bayan_capstone.ipynb`
+- `src/bayan/benchmarking.py`
+- `src/bayan/serving.py`
+- `tests/test_day4_benchmarking.py`
+- `tests/test_day4_serving.py`
 - `reports/t10_local_cpu_http_benchmark.json`
-- `EVALUATION_REPORT.md`
-- `DECISIONS.md`
-- `PROGRESS.md`
 
----
-
-## Final benchmark status
-
-**Benchmark ladder:** ✅ DOCUMENTED  
-**Prediction parity:** `1.0` ✅ PASS  
-**Observed parity quality tax:** `0` prediction changes on measured parity cases  
-**Real HTTP local CPU p99:** `27.903 ms`  
-**Concurrency:** `16`  
-**Target:** `<= 40 ms`  
-**T10 status:** ✅ PASS
+The final release should preserve the exact commit used for any reported project-artifact benchmark.
 
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**

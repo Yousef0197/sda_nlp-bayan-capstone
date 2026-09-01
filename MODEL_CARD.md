@@ -1,403 +1,288 @@
 # MODEL_CARD — Bayan
 
-## Project
-
-**Bayan — Bilingual Applied NLP Capstone**
-
-**Status:** ✅ COMPLETE
-
-**Training context:** Bayan — #SDAIA
-
----
+**Project:** Bayan — Bilingual Applied NLP Capstone  
+**Training context:** Bayan — **#SDAIA**
 
 ## System overview
 
-Bayan هو مسار تطبيقي ثنائي اللغة لمعالجة اللغة الطبيعية بالعربية والإنجليزية، ويجمع عدة مهام داخل Pipeline موحّد.
+Bayan is an educational bilingual Arabic/English NLP system that demonstrates:
 
-يشمل:
+- versioned preprocessing and PII masking;
+- topic and sentiment classification;
+- named entity recognition;
+- extractive QA with no-answer handling;
+- bilingual semantic search;
+- behavioural evaluation and error analysis;
+- benchmark/optimization paths;
+- FastAPI serving;
+- one measured extension.
 
-- Text preprocessing
-- PII masking
-- Topic classification
-- Sentiment classification
-- Named Entity Recognition
-- Extractive Question Answering
-- Semantic Search
-- Behavioural Evaluation
-- Error Analysis
-- FastAPI serving
-- Performance benchmarking
-- Measured extension
-
-**System status:** ✅ COMPLETE
+**Implementation status:** ✅ COMPLETE
 
 ---
 
-## Canonical notebook
+## Evidence hierarchy
 
-الدفتر المرجعي للمشروع:
+This model card deliberately separates:
 
-`notebooks/bayan_capstone.ipynb`
+- `MEASURED_SMOKE` — small synthetic educational suites;
+- `MEASURED_LOCAL` — actual local-machine measurements;
+- academy-frozen/reference-lab evidence — external evidence not replaced by this repository.
 
-ويجمع مختبرات Day 1–Day 4 في Notebook واحد قابل لإعادة التشغيل.
-
-**Canonical notebook status:** ✅ COMPLETE
+`ACADEMY_FROZEN_EVAL_REPLACED=False`
 
 ---
 
-## Transformer model
+## Main model and tokenizer choices
 
-يستخدم المشروع نموذجًا متعدد اللغات ضمن مسارات Transformer:
+### Bilingual task checkpoint
+
+Integrated task-training smoke paths use:
 
 `distilbert/distilbert-base-multilingual-cased`
 
-ويُستخدم ضمن سياق تعليمي تطبيقي ثنائي اللغة.
+The project uses a multilingual family because the target workflow is bilingual rather than Arabic-only.
 
-**Transformer path status:** ✅ COMPLETE
+### Day 1 tokenizer evidence
+
+| Tokenizer | Arabic fertility | English fertility |
+|---|---:|---:|
+| mBERT | `2.595` | `1.299` |
+| AraBERT | `1.182` | `3.714` |
+
+AraBERT tokenizes the Arabic sample more economically, while mBERT is substantially more balanced across the two languages in the measured sample. This evidence supports the multilingual-family decision for a shared bilingual path.
+
+### Semantic search models
+
+The formal search notebook uses:
+
+- embedding model: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
+- candidate index: FAISS `IndexFlatIP` after L2 normalization
+- reranker: `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1`
+
+The additional integration notebook uses deterministic bilingual concept canonicalization and lightweight reranking for a reproducible smoke run; that simplified integrated path does not replace the full formal CrossEncoder lab.
 
 ---
 
-## Topic & Sentiment Classification
+## Architecture constraints
 
-يعتمد المشروع على:
+The project documentation records:
 
-- TF-IDF baseline
-- Transformer-based classification
-- Macro-F1 comparison
+- scaled dot-product attention;
+- explicit mask semantics;
+- attention score shape `T_q × T_k`;
+- quadratic sequence-length growth of self-attention score matrices;
+- truncation as a measured design risk rather than an assumed-safe constant;
+- token fertility as evidence for tokenizer selection.
 
-### Measured results
+See `reports/day1_report.md` and `DECISIONS.md`.
 
-- Topic Macro-F1 delta: `+0.858`
-- Sentiment Macro-F1 delta: `+0.663`
+---
 
-**Result:** ✅ PASS
+## Task capabilities and measured smoke evidence
+
+| Task | Integration result | Evidence class |
+|---|---:|---|
+| Topic classification delta | `+0.858` Macro-F1 | `MEASURED_SMOKE` |
+| Sentiment classification delta | `+0.663` Macro-F1 | `MEASURED_SMOKE` |
+| NER entity F1 | `1.000` | `MEASURED_SMOKE` |
+| QA no-answer | `20/20` | `MEASURED_SMOKE` |
+| Recall@10 | `1.000` | `MEASURED_SMOKE` |
+| MRR@10 | `1.000` | `MEASURED_SMOKE` |
+| Invariance | `1.000` | `MEASURED_SMOKE` |
+| MFT | `1.000` | `MEASURED_SMOKE` |
+| Extension Top-1 delta | `+0.88` | `MEASURED_SMOKE` |
+
+These values do not imply production accuracy or an academy-frozen score.
+
+The repository also preserves weaker short-training Day 2 smoke reports under `reports/smoke/` rather than discarding inconvenient results. Those runs have different training/evaluation scopes and therefore are not mixed with the integration acceptance suite.
 
 ---
 
 ## Named Entity Recognition
 
-يدعم مسار NER:
+NER evidence includes:
 
-- `word_ids()` alignment
-- subword handling
-- `-100` masking
-- entity-level evaluation
+- `word_ids()` alignment;
+- explicit continuation/special-token handling with `-100`;
+- entity-level precision/recall/F1 evaluation path;
+- dedicated tests.
 
-### Measured result
-
-- Entity-level F1: `1.000`
-
-**Result:** ✅ PASS
+**Status:** `IMPLEMENTED`.
 
 ---
 
-## Extractive Question Answering
+## Extractive QA
 
-يدعم مسار QA:
+QA evidence includes:
 
-- start position
-- end position
-- valid span constraints
-- no-answer handling
+- start/end span preparation;
+- valid-span constraints;
+- no-answer handling;
+- boundary tests.
 
-### Measured result
-
-- No-answer success: `20/20`
-
-**Result:** ✅ PASS
+**Status:** `IMPLEMENTED`.
 
 ---
 
-## Unified Arabic profile
+## Arabic profile
 
-تم اعتماد ملف معالجة عربي موحّد بين:
+The project uses a documented Arabic processing contract and canaries to reduce train/eval/serve skew. The formal Arabic notebook includes CAMeL Tools where Arabic-specific normalization is useful.
 
-- Train
-- Evaluation
-- Serving
-
-كما تم استخدام Arabic canaries للتحقق من ثبات المسار.
-
-**Result:** ✅ PASS
+**Status:** `IMPLEMENTED`.
 
 ---
 
-## Semantic Search
+## Semantic search
 
-يعتمد البحث الدلالي على:
+Formal architecture:
 
-- bilingual text preprocessing
-- vector representation
-- FAISS retrieval
-- bilingual concept canonicalization
-- reranking
+`text → preprocessing → multilingual sentence embeddings → L2 normalization → FAISS IndexFlatIP → top-k candidates → CrossEncoder reranking`
 
-### Measured results
+The project evaluates retrieval using Recall/MRR and includes bilingual/cross-lingual analysis.
 
-- Recall@10: `1.000`
-- MRR@10: `1.000`
-
-**Result:** ✅ PASS
+**Status:** `IMPLEMENTED`.
 
 ---
 
-## Behavioural Evaluation
+## Error analysis
 
-يشمل التقييم السلوكي:
+Current row-level evidence:
 
-- Invariance
-- Minimum Functionality Tests
-- Arabic / English slices
-- bootstrap confidence intervals
+- baseline errors reviewed: `108`
+- improved path correct on those baseline errors: `106/108`
+- residual improved errors: `2`
 
-### Measured results
+Categories:
 
-- Invariance: `1.000`
-- MFT: `1.000`
+- cross-language intent/specificity gap: `56`
+- hash-collision/candidate-ordering errors: `44`
+- modifier-noise ranking instability: `8`
 
-**Result:** ✅ PASS
-
----
-
-## Error Analysis
-
-تم إنشاء جدول من `100` حالة للمراجعة ضمن مسار تحليل الأخطاء.
-
-تمت مراجعة `20` خطأ فعليًا يدويًا وتصنيفها.
-
-### Manual review categories
-
-- candidate_ordering: `12`
-- cross_language_lexical_gap: `5`
-- normalization_drift: `3`
-
-### Prioritized fixes
-
-1. bilingual concept canonicalization before embedding.
-2. FAISS candidate retrieval + reranking.
-3. unified train/eval/serve Arabic profile.
-
-### Evidence
+Evidence:
 
 - `reports/T9_MANUAL_REVIEW.md`
 - `reports/t9_manual_error_review.csv`
 
-**T9 Result:** ✅ PASS
+**Reviewer:** GPT-5.6 Sol  
+**Review type:** AI-assisted row-by-row semantic review  
+**Independent human-review claim:** `FALSE`
+
+If the academy requires the learner/instructor specifically to conduct the manual reading, human confirmation remains necessary before making that stricter claim.
 
 ---
 
 ## Serving
 
-يستخدم المشروع FastAPI لتقديم وظائف النظام.
+Serving contracts include:
 
-### Endpoints
-
-`GET /health`
-
-`POST /v1/classify`
-
-وتغطي الاختبارات:
-
-- Arabic input
-- English input
-- invalid input
+- `GET /health`
+- `POST /v1/classify`
+- input validation
+- language handling
 - PII masking
-- startup/API canaries
+- model/preprocessing manifest validation
+- startup canaries
+- stable JSON response metadata.
 
-**Result:** ✅ PASS
+See `src/bayan/serving.py` and Day 4 tests/notebooks.
+
+**Status:** `IMPLEMENTED`.
 
 ---
 
 ## Performance
 
-### Benchmark ladder
+Formal Notebook 08 implements:
 
-يشمل مسار القياس:
+- FP32 reference;
+- warm-up and repeated measurements;
+- p50/p95/p99 and throughput;
+- approximate process RSS/observed peak;
+- ONNX checker and ORT path;
+- prediction/numerical parity;
+- INT8 candidate;
+- quality tax;
+- FP32 rollback;
+- FastAPI canaries.
 
-- direct classification path
-- cached classification path
-- prediction parity
-- FastAPI / ASGI smoke measurement
-- real HTTP local CPU benchmark
+Additional local real-HTTP evidence:
 
-### Prediction parity
+- Windows 11 local CPU
+- 8 logical CPUs
+- concurrency `16`
+- warm-up `32`
+- measured requests `128`
+- p50 `19.172 ms`
+- p95 `24.805 ms`
+- p99 `27.903 ms`
+- mean `18.340 ms`
 
-تم التحقق من تطابق المخرجات بين المسار المباشر والمسار المحسن:
+**Evidence class:** `MEASURED_LOCAL`.
 
-`Prediction parity = 1.0`
-
-`DAY4_BENCHMARK_PARITY=PASS`
-
-### Final real-HTTP local CPU benchmark
-
-بيئة القياس:
-
-- Platform: Windows 11
-- CPU count: `8`
-- Concurrency: `16`
-- Warm-up requests: `32`
-- Measured requests: `128`
-
-### Measured results
-
-- HTTP p50: `19.172 ms`
-- HTTP p95: `24.805 ms`
-- HTTP p99: `27.903 ms`
-- HTTP mean: `18.340 ms`
-
-### Target
-
-`HTTP p99 <= 40 ms` at concurrency `16`
-
-### Benchmark result
-
-`T10_LOCAL_CPU_HTTP_TARGET_MET=True`
-
-`T10_LOCAL_CPU_HTTP_BENCHMARK=PASS`
-
-### Evidence
-
-`reports/t10_local_cpu_http_benchmark.json`
-
-### Environment boundary
-
-القياس النهائي تم على CPU محلي بنظام Windows.
-
-لا يُنسب هذا الجهاز إلى academy lab CPU محدد إلا إذا كانت البيئة الرسمية مطابقة ومعلنة.
-
-هذه الملاحظة توثّق بيئة القياس ولا تغيّر حالة اكتمال المشروع.
-
-**T10 Result:** ✅ PASS
+The machine is not represented as the academy reference lab CPU.
 
 ---
 
 ## Measured extension
 
-تمت إضافة الامتداد التالي:
+Extension:
 
 **Bilingual concept canonicalization + reranking**
 
-### Measured result
+Integration smoke:
 
-- Top-1 delta: `+0.88`
+- before Top-1 `0.10`
+- after Top-1 `0.98`
+- delta `+0.88`
 
-### Decision
+The integration notebook prints `KEEP` for a positive delta; project documentation normalizes the release decision to `ADOPT`. Both mean retain the improved candidate.
 
-`ADOPT`
-
-### Status
-
-`PASS`
-
-يوضح القرار أن الامتداد تم اعتماده بعد القياس لأن المقارنة قبل/بعد أظهرت تحسنًا موجبًا في Top-1.
-
-**T12 Result:** ✅ PASS
+**Decision:** `ADOPT`.
 
 ---
 
 ## Intended use
 
-المشروع مخصص للتطبيق التعليمي والعملي على مهام معالجة اللغة الطبيعية ثنائية اللغة، مع التركيز على:
+This repository is intended for:
 
-- قابلية القياس.
-- إعادة التشغيل.
-- المقارنة بين baseline والمسارات المحسنة.
-- التقييم السلوكي.
-- التوثيق القابل للمراجعة.
-- خدمة النموذج عبر API.
+- education and assessment in applied NLP;
+- reproducible demonstrations of bilingual NLP engineering;
+- inspection of design decisions, limitations and evidence provenance.
 
-**Intended-use status:** ✅ DOCUMENTED
+It is **not** a production government decision system and must not be treated as an authoritative high-stakes classifier.
 
 ---
 
 ## Data and privacy
 
-يعتمد المشروع على بيانات تعليمية اصطناعية، ويطبق:
-
-- PII masking
-- safe preprocessing
-- train / validation / test separation
-- bilingual evaluation
-
-ولا يعتمد على بيانات شخصية حقيقية داخل المستودع.
-
-كما أن أمثلة الهاتف والبريد المستخدمة في الاختبارات أمثلة اصطناعية.
-
-**Privacy status:** ✅ COMPLETE
+- synthetic educational data only;
+- no real citizen/customer PII is intentionally included;
+- email/phone samples are synthetic canaries;
+- secrets, `.env`, model weights and large checkpoints are excluded from GitHub;
+- frozen-test boundaries are documented.
 
 ---
 
-## Evaluation interpretation
+## Limitations
 
-تُفسَّر النتائج ضمن الحدود التالية:
-
-- `MEASURED_SMOKE=True`
-- `TEST_USED_FOR_SELECTION=False`
-- `ACADEMY_FROZEN_EVAL_REPLACED=False`
-
-نتائج الـcanonical notebook ناتجة من تشغيل فعلي للحزم التعليمية الاصطناعية.
-
-النتائج المرتفعة على هذه الحزم لا تعني ضمان جودة production مماثلة على بيانات واقعية غير مرئية.
-
-نتيجة T10 النهائية `27.903 ms` مصدرها قياس real HTTP محلي منفصل وموثق داخل `reports/`.
-
-**Evaluation documentation status:** ✅ COMPLETE
+1. Small synthetic suites can yield unstable or unrealistically high metrics.
+2. Separate smoke runs can disagree materially; preserved Day 2 smoke evidence demonstrates this.
+3. No academy-frozen evaluation package is replaced by repository smoke data.
+4. The `27.903 ms` HTTP p99 result is local-machine evidence, not a verified academy reference-CPU measurement.
+5. T9 row-level review is AI-assisted and not represented as independent human review.
+6. Production dialect/domain drift requires broader real-world validation before deployment.
 
 ---
 
 ## Validation and release
 
-تم تشغيل Submission Validator من Fresh Clone للوسم النهائي، وظهرت النتيجة:
+Required submission files, numbered notebooks, source modules, tests, reports and validator are present.
 
-`BAYAN_SUBMISSION_VALIDATOR=PASS`
+`submission-v1.0` exists but predates the latest evidence-alignment changes. The release must be refreshed to the final validated `main` commit before the repository is considered frozen for submission.
 
-تم التحقق من:
-
-- Required project structure
-- Nine valid notebooks and Core markers
-- `PROJECT_SUMMARY.json`
-- `SUBMISSION.yml`
-- No forbidden or oversized tracked artefacts
-- Final tag `submission-v1.0`
-
-كما تم التحقق من فتح المستودع العام ورابط Colab من نافذة خاصة.
-
-**Validation:** ✅ COMPLETE  
-**Public access:** ✅ COMPLETE  
-**Release:** ✅ COMPLETE
-
----
-
-## Presentation
-
-تم تجهيز العرض النهائي للمشروع واستكمال متطلب العرض.
-
-**Presentation:** ✅ COMPLETE
-
----
-
-## Final status
-
-**Classification:** ✅ COMPLETE  
-**Sentiment:** ✅ COMPLETE  
-**NER:** ✅ COMPLETE  
-**QA:** ✅ COMPLETE  
-**Arabic Profile:** ✅ COMPLETE  
-**Semantic Search:** ✅ COMPLETE  
-**Behavioural Evaluation:** ✅ COMPLETE  
-**T9 Manual Error Review:** ✅ COMPLETE  
-**Serving:** ✅ COMPLETE  
-**T10 Benchmark:** ✅ COMPLETE  
-**Measured Extension:** ✅ COMPLETE  
-**Privacy Documentation:** ✅ COMPLETE  
-**Validation:** ✅ COMPLETE  
-**Public Access:** ✅ COMPLETE  
-**Presentation:** ✅ COMPLETE  
-**Release:** ✅ COMPLETE  
-**Submission:** ✅ COMPLETE
-
-**MODEL CARD — COMPLETE**
-
-**BAYAN CAPSTONE — FINAL SUBMISSION COMPLETE**
+**Implementation:** ✅ COMPLETE  
+**Evidence documentation:** ✅ ALIGNED  
+**Final tag refresh:** ⏳ PENDING FINAL VALIDATION
 
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**

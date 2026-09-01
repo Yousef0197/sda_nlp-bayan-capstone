@@ -14,11 +14,22 @@
   ],
   "extension": {
     "name": "Bilingual concept canonicalization and reranking",
-    "evidence": "Measured before/after in the canonical notebook with Top-1 delta +0.88"
+    "evidence": "notebooks/bayan_capstone.ipynb: measured Top-1 delta +0.88; final documentation decision ADOPT"
   },
   "final_tag": "submission-v1.0",
   "privacy_check": true,
   "tests_passed": true,
   "benchmark_mode": "PROJECT_ARTIFACT",
-  "status": "COMPLETE"
+  "status": "IMPLEMENTATION_COMPLETE_FINAL_TAG_REFRESH_PENDING",
+  "evidence_scope": {
+    "canonical_notebook": "MEASURED_SMOKE",
+    "academy_frozen_eval_replaced": false,
+    "t9_reviewed_baseline_errors": 108,
+    "t9_review_method": "AI-assisted row-by-row semantic review",
+    "t9_human_review_claim": false,
+    "t10_local_http_p99_ms": 27.903,
+    "t10_concurrency": 16,
+    "t10_environment": "Windows local CPU; academy reference lab CPU not claimed"
+  },
+  "release_note": "Refresh submission-v1.0 to the final validated main commit before submission freeze."
 }
