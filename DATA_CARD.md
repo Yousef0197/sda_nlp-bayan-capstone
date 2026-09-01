@@ -26,24 +26,26 @@
 **Languages:** Arabic and English.  
 **External third-party dataset:** none.  
 **Sensitive real-user data:** none intentionally included.  
-**Repository snapshot reviewed:** 2026-09-01.
+**Repository snapshot verified:** 2026-09-01.
 
 ### Usage and licensing scope
 
 The dataset files are course-provided synthetic educational material used for the **SDA-AIE-211** learning and assessment workflow. No separate third-party dataset licence is asserted because no external dataset is redistributed by this project. Reuse outside the course/repository context should follow the applicable course and repository permissions.
 
-## File inventory
+## File inventory and SHA-256
 
-| File | Records / examples | Purpose |
-|---|---:|---|
-| `data/sample/bayan_day1_sample.csv` | `12` | bilingual preprocessing/tokenization sample |
-| `data/sample/bayan_day2_classification.csv` | `40` | topic + sentiment classification and grouped splits |
-| `data/sample/bayan_day2_ner.jsonl` | `12` sentences | BIO labels and subword-alignment experiments |
-| `data/sample/bayan_day2_qa.json` | `10` questions | extractive QA including no-answer cases |
-| `data/sample/bayan_day3_arabic.csv` | `20` | Arabic profiles, MSA/Gulf/Arabizi and channel variation |
-| `data/sample/bayan_day3_cases.csv` | `24` cases | bilingual semantic-search corpus |
-| `data/sample/bayan_day3_queries.jsonl` | `18` queries | validation/test retrieval relevance cases |
-| `data/sample/bayan_day3_predictions.csv` | `36` predictions | sliced evaluation, Macro-F1, confidence and paired comparisons |
+The hashes below are calculated from the tracked files in a clean GitHub Actions checkout. The workflow also prints `sha256sum data/sample/*` so the values can be independently reproduced.
+
+| File | Records / examples | SHA-256 | Purpose |
+|---|---:|---|---|
+| `data/sample/bayan_day1_sample.csv` | `12` | `904a5e1e860f23ac447307ecb2007e6f0cec253daa844c1e3395298d31b98a9a` | bilingual preprocessing/tokenization sample |
+| `data/sample/bayan_day2_classification.csv` | `40` | `c50de92fdab1aa36b19cf4c0f6e31c0bc521f70d6690635e839d7ba9ec7e9a77` | topic + sentiment classification and grouped splits |
+| `data/sample/bayan_day2_ner.jsonl` | `12` sentences | `ab413f0941656abf6f31ac16122abcb437d4c8c56b7cf820624e6a367bd4336e` | BIO labels and subword-alignment experiments |
+| `data/sample/bayan_day2_qa.json` | `10` questions | `4e894757b74d09df9e91140dd78ba6e0fcf8cffd052e2ab5702a7487a3e46f2f` | extractive QA including no-answer cases |
+| `data/sample/bayan_day3_arabic.csv` | `20` | `0a3346b6177d0c0b9b4e9734845579325f852ef7953e9e536fb1494ca9678889` | Arabic profiles, MSA/Gulf/Arabizi and channel variation |
+| `data/sample/bayan_day3_cases.csv` | `24` cases | `322867b54d1f6f358346197728452ca278b12dfd8ee9795c0a37cb674f3ebadd` | bilingual semantic-search corpus |
+| `data/sample/bayan_day3_queries.jsonl` | `18` queries | `f80ebd8b25c37b3317cba1a985b6cd40a8f0e7ad242c7584402795d73abcbe6b` | validation/test retrieval relevance cases |
+| `data/sample/bayan_day3_predictions.csv` | `36` predictions | `63b4df9dab076880b64ae0054009c5b136938e7df9ba0ff656656212b5817c8d` | sliced evaluation, Macro-F1, confidence and paired comparisons |
 
 A more granular day-by-day description is preserved in `data/DATA_CARD.md`.
 
@@ -208,6 +210,8 @@ The metrics are interpreted together with the exact notebook/report and runtime 
 ## Final status
 
 **Source/provenance:** ✅ COMPLETE  
+**Usage/licensing scope:** ✅ COMPLETE  
+**SHA-256 integrity:** ✅ COMPLETE  
 **File inventory and fields:** ✅ COMPLETE  
 **Split/leakage policy:** ✅ COMPLETE  
 **Privacy controls:** ✅ COMPLETE  
