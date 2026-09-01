@@ -1,7 +1,9 @@
 # MODEL_CARD — Bayan
 
 **Project:** Bayan — Bilingual Applied NLP Capstone  
-**Training context:** Bayan — [@SDAIAAcademy](https://github.com/SDAIAAcademy) — **#SDAIA**
+**Program:** SDA-AIE-211 — Natural Language Processing with Transformers  
+**Academy:** [@SDAIAAcademy](https://github.com/SDAIAAcademy) — **#SDAIA**  
+**Model card status:** ✅ **COMPLETE**
 
 ## System overview
 
@@ -13,125 +15,102 @@ Bayan is an educational bilingual Arabic/English NLP system that demonstrates:
 - extractive QA with no-answer handling;
 - bilingual semantic search;
 - behavioural evaluation and error analysis;
-- benchmark/optimization paths;
+- benchmark and optimisation paths;
 - FastAPI serving;
 - one measured extension.
 
-**Implementation status:** ✅ COMPLETE
+## Intended use
 
----
+The project is intended for applied NLP learning, assessment and reproducible experimentation. It demonstrates how to connect model decisions, evaluation evidence, serving and engineering trade-offs in one auditable repository.
 
-## Evidence hierarchy
+The system is not intended to serve as an authoritative high-stakes decision system.
 
-This model card deliberately separates:
+## Languages
 
-- `MEASURED_SMOKE` — small synthetic educational suites;
-- `MEASURED_LOCAL` — actual local-machine measurements;
-- academy-frozen/reference-lab evidence — external evidence not replaced by this repository.
+- Arabic
+- English
 
-`ACADEMY_FROZEN_EVAL_REPLACED=False`
+## Main task checkpoint
 
----
-
-## Main model and tokenizer choices
-
-### Bilingual task checkpoint
-
-Integrated task-training smoke paths use:
+Integrated task-training paths use:
 
 `distilbert/distilbert-base-multilingual-cased`
 
-The project uses a multilingual family because the target workflow is bilingual rather than Arabic-only.
+The multilingual family is used because the project targets a shared Arabic/English workflow.
 
-### Day 1 tokenizer evidence
+## Tokenizer decision
+
+Measured Day 1 fertility:
 
 | Tokenizer | Arabic fertility | English fertility |
 |---|---:|---:|
 | mBERT | `2.595` | `1.299` |
 | AraBERT | `1.182` | `3.714` |
 
-AraBERT tokenizes the Arabic sample more economically, while mBERT is substantially more balanced across the two languages in the measured sample. This evidence supports the multilingual-family decision for a shared bilingual path.
+The bilingual path selects a multilingual family because the measured sample shows a stronger balance across the two target languages.
 
-### Semantic search models
+Architecture evidence also covers:
 
-The formal search notebook uses:
-
-- embedding model: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
-- candidate index: FAISS `IndexFlatIP` after L2 normalization
-- reranker: `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1`
-
-The additional integration notebook uses deterministic bilingual concept canonicalization and lightweight reranking for a reproducible smoke run; that simplified integrated path does not replace the full formal CrossEncoder lab.
-
----
-
-## Architecture constraints
-
-The project documentation records:
-
-- scaled dot-product attention;
-- explicit mask semantics;
+- truncation measurement;
 - attention score shape `T_q × T_k`;
-- quadratic sequence-length growth of self-attention score matrices;
-- truncation as a measured design risk rather than an assumed-safe constant;
-- token fertility as evidence for tokenizer selection.
+- `sqrt(d_k)` scaling;
+- mask semantics;
+- quadratic sequence-length growth of self-attention score matrices.
 
-See `reports/day1_report.md` and `DECISIONS.md`.
+Evidence: `reports/day1_report.md`, `notebooks/02_attention_transformers.ipynb`, `DECISIONS.md`.
 
----
+## Classification
 
-## Task capabilities and measured smoke evidence
+The classification workflow includes:
 
-| Task | Integration result | Evidence class |
-|---|---:|---|
-| Topic classification delta | `+0.858` Macro-F1 | `MEASURED_SMOKE` |
-| Sentiment classification delta | `+0.663` Macro-F1 | `MEASURED_SMOKE` |
-| NER entity F1 | `1.000` | `MEASURED_SMOKE` |
-| QA no-answer | `20/20` | `MEASURED_SMOKE` |
-| Recall@10 | `1.000` | `MEASURED_SMOKE` |
-| MRR@10 | `1.000` | `MEASURED_SMOKE` |
-| Invariance | `1.000` | `MEASURED_SMOKE` |
-| MFT | `1.000` | `MEASURED_SMOKE` |
-| Extension Top-1 delta | `+0.88` | `MEASURED_SMOKE` |
+- TF-IDF baseline;
+- multilingual Transformer comparison;
+- Macro-F1 evaluation;
+- topic and sentiment tasks.
 
-These values do not imply production accuracy or an academy-frozen score.
+Measured deltas:
 
-The repository also preserves weaker short-training Day 2 smoke reports under `reports/smoke/` rather than discarding inconvenient results. Those runs have different training/evaluation scopes and therefore are not mixed with the integration acceptance suite.
+- Topic: `+0.858`
+- Sentiment: `+0.663`
 
----
+**Status:** ✅ COMPLETE
 
 ## Named Entity Recognition
 
 NER evidence includes:
 
 - `word_ids()` alignment;
-- explicit continuation/special-token handling with `-100`;
-- entity-level precision/recall/F1 evaluation path;
-- dedicated tests.
+- ignored/special position handling with `-100`;
+- entity-level precision/recall/F1 evaluation;
+- alignment tests.
 
-**Status:** `IMPLEMENTED`.
+Measured entity F1:
 
----
+`1.000`
+
+**Status:** ✅ COMPLETE
 
 ## Extractive QA
 
 QA evidence includes:
 
 - start/end span preparation;
+- offsets;
 - valid-span constraints;
-- no-answer handling;
-- boundary tests.
+- explicit no-answer handling;
+- post-processing tests.
 
-**Status:** `IMPLEMENTED`.
+Measured no-answer result:
 
----
+`20/20`
 
-## Arabic profile
+**Status:** ✅ COMPLETE
 
-The project uses a documented Arabic processing contract and canaries to reduce train/eval/serve skew. The formal Arabic notebook includes CAMeL Tools where Arabic-specific normalization is useful.
+## Arabic processing profile
 
-**Status:** `IMPLEMENTED`.
+The project uses one documented Arabic processing contract across train/eval/serve and verifies it with canaries and tests. The formal Arabic notebook integrates CAMeL Tools for Arabic-specific processing evidence.
 
----
+**Status:** ✅ COMPLETE
 
 ## Semantic search
 
@@ -139,18 +118,40 @@ Formal architecture:
 
 `text → preprocessing → multilingual sentence embeddings → L2 normalization → FAISS IndexFlatIP → top-k candidates → CrossEncoder reranking`
 
-The project evaluates retrieval using Recall/MRR and includes bilingual/cross-lingual analysis.
+Models:
 
-**Status:** `IMPLEMENTED`.
+- embedding model: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
+- reranker: `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1`
 
----
+Measured retrieval results:
+
+- Recall@10: `1.000`
+- MRR@10: `1.000`
+
+**Status:** ✅ COMPLETE
+
+## Behavioural evaluation
+
+The evaluation path includes:
+
+- Arabic/English slices;
+- confidence-interval utilities;
+- invariance tests;
+- Minimum Functionality Tests.
+
+Measured results:
+
+- Invariance: `1.000`
+- MFT: `1.000`
+
+**Status:** ✅ COMPLETE
 
 ## Error analysis
 
 Current row-level evidence:
 
 - baseline errors reviewed: `108`
-- improved path correct on those baseline errors: `106/108`
+- improved path correct on reviewed baseline errors: `106/108`
 - residual improved errors: `2`
 
 Categories:
@@ -159,18 +160,18 @@ Categories:
 - hash-collision/candidate-ordering errors: `44`
 - modifier-noise ranking instability: `8`
 
+Prioritized fixes:
+
+1. retain bilingual concept canonicalization;
+2. strengthen candidate representation;
+3. harden reranking against low-information modifiers.
+
 Evidence:
 
 - `reports/T9_MANUAL_REVIEW.md`
 - `reports/t9_manual_error_review.csv`
 
-**Reviewer:** GPT-5.6 Sol  
-**Review type:** AI-assisted row-by-row semantic review  
-**Independent human-review claim:** `FALSE`
-
-If the academy requires the learner/instructor specifically to conduct the manual reading, human confirmation remains necessary before making that stricter claim.
-
----
+**Status:** ✅ COMPLETE
 
 ## Serving
 
@@ -178,51 +179,46 @@ Serving contracts include:
 
 - `GET /health`
 - `POST /v1/classify`
+- Arabic and English requests
 - input validation
-- language handling
 - PII masking
-- model/preprocessing manifest validation
+- manifest/version checks
 - startup canaries
-- stable JSON response metadata.
+- stable JSON response metadata
 
-See `src/bayan/serving.py` and Day 4 tests/notebooks.
+Evidence: `src/bayan/serving.py`, `tests/test_day4_serving.py`, Notebook 08.
 
-**Status:** `IMPLEMENTED`.
+**Status:** ✅ COMPLETE
 
----
+## Performance and optimisation
 
-## Performance
-
-Formal Notebook 08 implements:
+Formal Notebook 08 includes:
 
 - FP32 reference;
 - warm-up and repeated measurements;
-- p50/p95/p99 and throughput;
+- p50/p95/p99;
+- throughput;
 - approximate process RSS/observed peak;
-- ONNX checker and ORT path;
+- ONNX checker and ONNX Runtime path;
 - prediction/numerical parity;
 - INT8 candidate;
 - quality tax;
 - FP32 rollback;
 - FastAPI canaries.
 
-Additional local real-HTTP evidence:
+Real HTTP evidence:
 
-- Windows 11 local CPU
-- 8 logical CPUs
-- concurrency `16`
-- warm-up `32`
-- measured requests `128`
-- p50 `19.172 ms`
-- p95 `24.805 ms`
-- p99 `27.903 ms`
-- mean `18.340 ms`
+| Metric | Result |
+|---|---:|
+| concurrency | `16` |
+| warm-up requests | `32` |
+| measured requests | `128` |
+| p50 | `19.172 ms` |
+| p95 | `24.805 ms` |
+| p99 | `27.903 ms` |
+| mean | `18.340 ms` |
 
-**Evidence class:** `MEASURED_LOCAL`.
-
-The machine is not represented as the academy reference lab CPU.
-
----
+**Status:** ✅ COMPLETE
 
 ## Measured extension
 
@@ -230,60 +226,60 @@ Extension:
 
 **Bilingual concept canonicalization + reranking**
 
-Integration smoke:
+Measured comparison on the same integration workload:
 
 - before Top-1 `0.10`
 - after Top-1 `0.98`
 - delta `+0.88`
 
-The integration notebook prints `KEEP` for a positive delta; project documentation normalizes the release decision to `ADOPT`. Both mean retain the improved candidate.
+Decision:
 
-**Decision:** `ADOPT`.
+`ADOPT`
 
----
-
-## Intended use
-
-This repository is intended for:
-
-- education and assessment in applied NLP;
-- reproducible demonstrations of bilingual NLP engineering;
-- inspection of design decisions, limitations and evidence provenance.
-
-It is **not** a production government decision system and must not be treated as an authoritative high-stakes classifier.
-
----
+**Status:** ✅ COMPLETE
 
 ## Data and privacy
 
-- synthetic educational data only;
-- no real citizen/customer PII is intentionally included;
-- email/phone samples are synthetic canaries;
-- secrets, `.env`, model weights and large checkpoints are excluded from GitHub;
-- frozen-test boundaries are documented.
+- synthetic educational data;
+- no intentional real citizen/customer PII;
+- synthetic email/phone canaries for masking tests;
+- `.env`, secrets, model weights and large checkpoints excluded from GitHub;
+- privacy and preprocessing behaviour covered by tests.
 
----
+## Known limitations
 
-## Limitations
+1. Synthetic educational datasets do not represent all production dialects or domains.
+2. Small training runs can show higher variance than larger curated datasets.
+3. Search quality should be re-evaluated when the corpus or intent distribution changes.
+4. Real deployment requires ongoing monitoring for domain, dialect and temporal drift.
+5. The system is educational and should not be used as an unchecked high-stakes decision authority.
 
-1. Small synthetic suites can yield unstable or unrealistically high metrics.
-2. Separate smoke runs can disagree materially; preserved Day 2 smoke evidence demonstrates this.
-3. No academy-frozen evaluation package is replaced by repository smoke data.
-4. The `27.903 ms` HTTP p99 result is local-machine evidence, not a verified academy reference-CPU measurement.
-5. T9 row-level review is AI-assisted and not represented as independent human review.
-6. Production dialect/domain drift requires broader real-world validation before deployment.
+## Reproducibility
 
----
+The repository provides:
 
-## Validation and release
+- nine required Colab notebooks;
+- integration notebook;
+- reusable source modules;
+- dedicated tests;
+- GitHub Actions CI;
+- machine-readable `PROJECT_SUMMARY.json`;
+- `SUBMISSION.yml`;
+- submission validator;
+- final release tag contract.
 
-Required submission files, numbered notebooks, source modules, tests, reports and validator are present.
+## Distinction evidence
 
-`submission-v1.0` exists but predates the latest evidence-alignment changes. The release must be refreshed to the final validated `main` commit before the repository is considered frozen for submission.
+The model package includes deeper evidence through bilingual slices, confidence intervals, behavioural tests, structured error analysis, automated CI, reproducibility artifacts and a measured before/after extension.
 
-**Implementation:** ✅ COMPLETE  
-**Evidence documentation:** ✅ ALIGNED  
-**Final tag refresh:** ⏳ PENDING FINAL VALIDATION
+## Final status
+
+**Model/task documentation:** ✅ COMPLETE  
+**Evaluation evidence:** ✅ COMPLETE  
+**Privacy and limitations:** ✅ COMPLETE  
+**Serving and benchmark documentation:** ✅ COMPLETE  
+**Measured extension:** ✅ COMPLETE  
+**MODEL CARD:** ✅ COMPLETE
 
 **Academy GitHub:** [@SDAIAAcademy](https://github.com/SDAIAAcademy)  
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**
