@@ -41,6 +41,35 @@ Primary evidence:
 
 This provides the required optimisation ladder rather than selecting a candidate from one latency number.
 
+## Executed optimisation evidence in Notebook 08
+
+The committed Notebook 08 contains an executed `SYSTEMS_SMOKE` optimisation run on CPU. It is retained as systems-level evidence for the export/quantisation/parity path and is kept distinct from the real HTTP service benchmark below.
+
+Recorded runtime:
+
+- Python `3.12.13`
+- PyTorch `2.13.0+cpu`
+- device `cpu`
+- ONNX Runtime CPU provider available
+- reference model `google/bert_uncased_L-2_H-128_A-2`
+- warm-up `5`
+- repetitions `30`
+- items per model-only call `8`
+
+### Candidate comparison
+
+| Candidate | Size | p95 model-only | Prediction parity | Decision evidence |
+|---|---:|---:|---:|---|
+| PyTorch FP32 reference | `16.732 MiB` parameter state | `9.908 ms` | reference | rollback/reference path |
+| ONNX FP32 | `16.788 MiB` | `6.418 ms` | `1.000` | ONNX checker + parity PASS |
+| ONNX dynamic INT8 | `4.272 MiB` | `1.731 ms` | `1.000` | candidate budget PASS |
+
+ONNX FP32 numerical parity recorded:
+
+`max_abs_logits_diff = 1.4901161193847656e-07`
+
+The notebook records both FP32-ORT and INT8 latency/quality/throughput budget checks as passing for this executed systems workload. The selected systems-smoke candidate is dynamic INT8. The notebook explicitly treats that systems-smoke selection as a benchmark-path decision rather than a substitute for a separately measured production-quality claim.
+
 ## Integration service measurement
 
 The integration notebook records an ASGI service measurement at concurrency `16` with `128` measured requests and HTTP p99 `32.907 ms`.
@@ -90,25 +119,27 @@ Target comparison:
 
 ## Throughput and memory
 
-The formal Notebook 08 benchmark path records:
+The formal benchmark helper and Notebook 08 record the measurement contract for:
 
 - `throughput_items_s`;
-- approximate process RSS start;
-- observed process RSS peak.
+- approximate `rss_start_mb`;
+- `rss_peak_observed_mb`;
+- `rss_observed_delta_mb`.
 
-These measurements are part of the formal candidate-comparison schema and are interpreted together with latency, parity and quality tax.
+The RSS method is process RSS at benchmark start plus the maximum value observed during repeated calls. It is intentionally described as an approximation rather than exact tensor allocation. The candidate budget also checks minimum throughput alongside latency and quality tax.
 
-## Prediction parity
+The standalone real-HTTP JSON is the preserved evidence for the `27.903 ms` p99 run; it records its request count, concurrency and latency distribution. Candidate throughput/RSS evidence belongs to the formal Notebook 08 benchmark report and is not inferred from the standalone latency JSON.
 
-The integration benchmark checks direct vs cached prediction parity and records:
+## Prediction parity and quality tax
 
-`Prediction parity = 1.0`
+The optimisation evidence includes two complementary parity checks:
 
-Observed prediction changes on the measured parity cases:
+- ONNX FP32 prediction agreement with the PyTorch reference: `1.000`;
+- INT8 prediction agreement with the FP32 reference: `1.000`.
 
-`0`
+The integration benchmark additionally records direct-vs-cached prediction parity of `1.0` with `0` observed prediction changes on its measured suite.
 
-This verifies that the measured caching optimisation did not change predictions on the parity suite.
+Candidate adoption is evaluated together with quality tax rather than speed alone.
 
 ## ONNX / INT8 decision framework
 
@@ -131,7 +162,14 @@ The FP32 reference is preserved as the fallback path. If a candidate fails parit
 
 ## Reproducibility
 
-Run the formal benchmark notebook from a clean runtime and preserve the generated small report with the exact environment and commit. The standalone real-HTTP JSON already records the environment and measured latency values for the documented run.
+The committed notebook records model/runtime versions, workload configuration, warm-up/repetition counts, hashes, artifact sizes and decision logic. The standalone real-HTTP JSON records the environment and measured latency values for the documented concurrency-16 run.
+
+For final verification:
+
+```bash
+PYTHONPATH=src pytest -q
+PYTHONPATH=src python scripts/validate_submission.py .
+```
 
 ## Distinction evidence
 
@@ -140,10 +178,11 @@ The benchmark package strengthens the project through:
 - explicit benchmark design;
 - warm-up and repeated measurements;
 - tail latency rather than mean-only reporting;
-- concurrency `16` evidence;
+- concurrency `16` real-HTTP evidence;
+- measured FP32 → ONNX → INT8 size/latency comparison;
 - throughput and memory instrumentation;
-- parity and quality-tax checks;
-- ONNX/INT8 candidate comparison;
+- numerical and prediction parity;
+- quality-tax checks;
 - rollback reasoning;
 - reproducible environment documentation.
 
@@ -153,7 +192,8 @@ The benchmark package strengthens the project through:
 **p50/p95/p99:** ✅ COMPLETE  
 **Concurrency 16 measurement:** ✅ COMPLETE  
 **HTTP p99 target:** ✅ PASS  
-**Throughput/memory instrumentation:** ✅ COMPLETE  
+**Artifact size comparison:** ✅ COMPLETE  
+**Throughput/memory measurement path:** ✅ COMPLETE  
 **Parity/quality tax:** ✅ COMPLETE  
 **ONNX/INT8/rollback path:** ✅ COMPLETE  
 **T10:** ✅ COMPLETE
