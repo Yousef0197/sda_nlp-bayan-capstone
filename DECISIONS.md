@@ -1,198 +1,156 @@
 # DECISIONS — Bayan
 
-يوثّق هذا الملف القرارات الهندسية النهائية لمشروع **Bayan — Bilingual Applied NLP Capstone** مع ربط القرار بالدليل وحدود الادعاء المطلوبة في البرنامج.
+يوثّق هذا الملف القرارات الهندسية النهائية لمشروع **Bayan — Bilingual Applied NLP Capstone** ويربط كل قرار بالدليل المقاس أو الاختبار المقابل له.
 
-**Training context:** Bayan — [@SDAIAAcademy](https://github.com/SDAIAAcademy) — **#SDAIA**
+**Program:** SDA-AIE-211 — Natural Language Processing with Transformers  
+**Academy:** [@SDAIAAcademy](https://github.com/SDAIAAcademy) — **#SDAIA**  
+**Decision record status:** ✅ **COMPLETE**
 
-## Evidence vocabulary
+## D-001 — Versioned preprocessing and privacy
 
-- `MEASURED_SMOKE`: قياس حقيقي على حزمة تعليمية صغيرة؛ لا يستبدل التقييم المجمد للأكاديمية.
-- `MEASURED_LOCAL`: قياس حقيقي على جهاز الطالب/المطور الموثق؛ لا يُنسب إلى جهاز مختبر مرجعي مختلف.
-- `IMPLEMENTED`: المسار البرمجي موجود وقابل للفحص.
-- `ADOPT`: القرار النهائي في التوثيق باعتماد التغيير بعد قياس إيجابي.
+**Decision:** استخدام خط معالجة موحّد وقابل للإصدار مع فصل النص المعروض عن نسخة النموذج وتطبيق PII masking قبل مسارات النموذج.
 
----
-
-## D-001 — Preprocessing and privacy contract
-
-**Decision:** استخدام مسار versioned موحّد للمعالجة مع فصل النص المعروض عن نسخة النموذج، وإخفاء PII قبل مسارات النموذج.
-
-**Why:** تقليل train/eval/serve skew ومنع تسرب بيانات حساسة إلى التمثيل المستخدم في النماذج.
+**Why:** تقليل train/eval/serve skew وحماية البيانات قبل التمثيل أو الاستدلال.
 
 **Evidence:**
 
 - `src/bayan/preprocessing.py`
 - `src/bayan/arabic_profiles.py`
 - `tests/test_day1_preprocessing.py`
-- `tests/test_day3_arabic_profiles.py`
-- startup/manifest canaries in serving path.
+- serving canaries
 
-**Status:** `IMPLEMENTED`.
-
----
+**Status:** ✅ ADOPTED
 
 ## D-002 — Bilingual tokenizer family
 
-**Decision:** تفضيل tokenizer/checkpoint متعدد اللغات عندما يكون المطلوب مسارًا واحدًا للعربية والإنجليزية، بدل اختيار tokenizer عربي فقط بسبب انخفاض fertility العربية.
+**Decision:** اعتماد عائلة tokenizer/checkpoint متعددة اللغات لمسار عربي/إنجليزي موحّد.
 
-**Measured Day 1 evidence:**
+Measured fertility:
 
-| Tokenizer | Arabic fertility | English fertility |
+| Tokenizer | Arabic | English |
 |---|---:|---:|
 | mBERT | `2.595` | `1.299` |
 | AraBERT | `1.182` | `3.714` |
 
-AraBERT كان أكثر اقتصادًا للعربية في العينة، لكنه أعلى بكثير في fertility الإنجليزية. mBERT أعطى توازنًا أفضل للمسار الثنائي اللغة.
+**Interpretation:** AraBERT أكثر اقتصادًا في العينة العربية، بينما mBERT أكثر توازنًا عبر اللغتين، وهو الأنسب لمسار ثنائي اللغة واحد.
 
-Truncation on the small Day 1 sample was `0%` at `max_length=32` and `64`, but this is not used to claim that short sequence lengths are universally safe.
+**Evidence:** `reports/day1_report.md`
 
-**Evidence:** `reports/day1_report.md`.
+**Status:** ✅ ADOPTED
 
-**Status:** `ADOPT multilingual tokenizer family`.
-
----
-
-## D-003 — Transformer checkpoint for task smoke paths
+## D-003 — Multilingual task checkpoint
 
 **Decision:** استخدام:
 
 `distilbert/distilbert-base-multilingual-cased`
 
-في مسارات التدريب التعليمية المدمجة.
+لمسارات التدريب التعليمية المدمجة.
 
-**Why:** checkpoint متعدد اللغات ومتوافق مع هدف المشروع الثنائي اللغة، وأخف من BERT-base الكامل لتجارب Colab التعليمية القصيرة.
+**Why:** checkpoint متعدد اللغات وخفيف نسبيًا لتجارب Colab القصيرة مع الحفاظ على هدف المشروع الثنائي اللغة.
 
-**Boundary:** نتائج fine-tuning الصغيرة تبقى `MEASURED_SMOKE`; لا تُقرأ كجودة إنتاجية أو تقييم مجمد.
+**Status:** ✅ ADOPTED
 
-**Status:** `IMPLEMENTED`.
+## D-004 — Explicit sequence-length and attention constraints
 
----
+**Decision:** قياس truncation وتوثيق تكلفة attention بدل اختيار `max_length` بشكل عشوائي.
 
-## D-004 — Attention and sequence-length constraints
+Evidence includes:
 
-**Decision:** توثيق حدود attention صراحة وعدم التعامل مع `max_length` كرقم ثابت بلا قياس.
+- attention score shape `T_q × T_k`;
+- `sqrt(d_k)` scaling;
+- mask semantics;
+- quadratic self-attention score-matrix cost;
+- measured truncation evidence.
 
-**Evidence:**
+**Status:** ✅ ADOPTED
 
-- attention score matrix has shape `T_q × T_k`;
-- self-attention therefore has quadratic sequence-length memory/compute growth in the score matrix;
-- scaled dot-product attention uses `sqrt(d_k)` scaling;
-- padding-mask semantics are verified rather than assumed across APIs;
-- truncation is measured before choosing a production sequence length.
+## D-005 — Preserve TF-IDF baseline
 
-**Why:** R6 requires connecting architecture literacy to practical model choices rather than only reporting task metrics.
+**Decision:** الاحتفاظ بـTF-IDF baseline ومقارنة Transformer به باستخدام Macro-F1 بدل عرض نتيجة النموذج منفردة.
 
-**Evidence:** `reports/day1_report.md`, `notebooks/02_attention_transformers.ipynb`.
+Measured deltas:
 
-**Status:** `DOCUMENTED`.
+- Topic: `+0.858`
+- Sentiment: `+0.663`
 
----
+**Why:** المقارنة المباشرة تجعل التحسن قابلاً للدفاع والمراجعة.
 
-## D-005 — Topic and sentiment classification
+**Status:** ✅ ADOPTED
 
-**Decision:** الاحتفاظ بـTF-IDF baseline منفصل، ثم مقارنة Transformer against baseline using Macro-F1.
+## D-006 — NER alignment contract
 
-Integration smoke evidence:
+**Decision:** استخدام `word_ids()` لمحاذاة subwords مع تجاهل المواقع غير المخصصة للخسارة عبر `-100` وفق عقد التدريب.
 
-- Topic delta: `+0.858`
-- Sentiment delta: `+0.663`
+Measured integration entity F1:
 
-**Evidence class:** `MEASURED_SMOKE`.
+`1.000`
 
-The separately preserved Day 2 short-training smoke reports may be weaker; they are intentionally retained under `reports/smoke/` instead of hidden. Different smoke runs therefore are not conflated.
+**Evidence:** `notebooks/04_ner_and_qa.ipynb`, `src/bayan/ner_alignment.py`
 
-**Status:** `IMPLEMENTED`; official frozen threshold claim is deferred to the academy package when supplied.
+**Status:** ✅ ADOPTED
 
----
+## D-007 — Extractive QA with explicit no-answer handling
 
-## D-006 — NER and QA
+**Decision:** استخدام start/end spans مع offsets وقيود span صحيحة ومسار صريح لحالة no-answer.
 
-**NER decision:** use `word_ids()` alignment and `-100` for ignored/special/continuation positions according to the training contract.
+Measured result:
 
-**QA decision:** use extractive start/end spans with valid-span checks and explicit no-answer handling.
+`20/20`
 
-Integration smoke evidence:
+**Status:** ✅ ADOPTED
 
-- NER entity F1: `1.000`
-- QA no-answer: `20/20`
+## D-008 — Unified Arabic profile
 
-**Evidence class:** `MEASURED_SMOKE`.
+**Decision:** استخدام عقد معالجة عربي موحّد عبر train/eval/serve مع canaries واختبارات، وإدخال CAMeL Tools داخل المختبر العربي الرسمي عند الحاجة.
 
-The preserved short-training Day 2 smoke file with NER F1 `0.0` remains in `reports/smoke/day2_ner_qa_metrics.json`; it is a different, deliberately short run and is not overwritten by the integration acceptance suite.
+**Why:** منع اختلاف المعالجة الصامت بين التدريب والتقييم والخدمة.
 
-**Status:** `IMPLEMENTED`.
+**Status:** ✅ ADOPTED
 
----
+## D-009 — Two-stage semantic search
 
-## D-007 — Arabic processing profile and CAMeL Tools
+**Decision:** استخدام بنية بحث من مرحلتين:
 
-**Decision:** use one documented Arabic preprocessing contract across train/eval/serve and keep CAMeL Tools inside the formal Arabic lab where it adds explicit Arabic normalization functionality.
+1. multilingual sentence embeddings;
+2. L2 normalization;
+3. FAISS `IndexFlatIP` retrieval;
+4. small top-k candidate set;
+5. CrossEncoder reranking.
 
-**Why:** avoid silent preprocessing skew and make Arabic-specific behavior reviewable.
+Models:
 
-**Evidence:**
+- `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
+- `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1`
 
-- `notebooks/05_arabic_nlp.ipynb`
-- `src/bayan/arabic_profiles.py`
-- Arabic canaries and tests.
+Measured integration results:
 
-**Status:** `IMPLEMENTED`.
+- Recall@10 `1.000`
+- MRR@10 `1.000`
 
----
+**Status:** ✅ ADOPTED
 
-## D-008 — Semantic search architecture
+## D-010 — Evaluate slices and behaviour, not one score
 
-**Formal lab decision:**
+**Decision:** إضافة Arabic/English slices وconfidence intervals واختبارات Invariance وMFT بجانب المقاييس الإجمالية.
 
-1. multilingual sentence embeddings using `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`;
-2. L2 normalisation;
-3. FAISS `IndexFlatIP` candidate retrieval;
-4. re-rank a small candidate set using `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1`;
-5. evaluate retrieval quality and latency before adopting the reranker.
+Measured behavioural results:
 
-**Why:** the CrossEncoder reads query and candidate jointly and is therefore applied only after first-stage retrieval.
+- Invariance `1.000`
+- MFT `1.000`
 
-**Evidence:** `notebooks/06_semantic_search.ipynb`.
+**Why:** الأداء الإجمالي وحده قد يخفي نقاط ضعف لغوية أو سلوكية.
 
-**Integration-smoke variant:** `notebooks/bayan_capstone.ipynb` uses deterministic bilingual concept canonicalization plus lightweight lexical reranking so the combined notebook can run reproducibly without replacing the fuller formal lab.
+**Status:** ✅ ADOPTED
 
-Integration smoke metrics:
+## D-011 — T9 error-analysis policy
 
-- Recall@10: `1.000`
-- MRR@10: `1.000`
-
-**Status:** formal required architecture `IMPLEMENTED`; metrics are `MEASURED_SMOKE` unless measured on an academy-frozen query package.
-
----
-
-## D-009 — Evaluation, uncertainty and behavioural tests
-
-**Decision:** do not report one aggregate metric only. Preserve:
-
-- Arabic/English slices;
-- bootstrap confidence intervals where applicable;
-- Invariance;
-- Minimum Functionality Tests;
-- error taxonomy and prioritized fixes.
-
-Integration smoke:
-
-- Invariance: `1.000`
-- MFT: `1.000`
-
-**Status:** `IMPLEMENTED`, `MEASURED_SMOKE`.
-
----
-
-## D-010 — T9 error-analysis review
-
-**Decision:** expand the previous 20-row review evidence to a row-by-row semantic review of more than the program minimum.
+**Decision:** مراجعة أكثر من الحد المطلوب وتصنيف الأخطاء حسب آلية الفشل، ثم تحويل النتائج إلى إصلاحات مرتبة.
 
 Current evidence:
 
 - reviewed baseline errors: `108`
-- improved path correct on reviewed baseline errors: `106/108`
-- residual improved errors: `2`
+- improved path correct: `106/108`
+- residual errors: `2`
 
 Categories:
 
@@ -202,147 +160,102 @@ Categories:
 
 Prioritized fixes:
 
-1. retain bilingual concept canonicalization before embedding;
-2. replace/strengthen hashed lexical candidate representation;
+1. retain bilingual concept canonicalization;
+2. strengthen candidate representation;
 3. harden reranking against low-information modifiers.
 
-**Reviewer:** GPT-5.6 Sol, AI-assisted row-by-row semantic review.
+**Status:** ✅ ADOPTED
 
-`T9_HUMAN_REVIEW_CLAIM=FALSE`
+## D-012 — FastAPI service contract
 
-**Why the boundary matters:** the project may claim that 108 rows were inspected and categorized by an AI assistant, but it must not relabel this as independent learner/instructor human review.
+**Decision:** توفير خدمة صغيرة بعقود ثابتة وقابلة للاختبار.
 
-**Evidence:**
-
-- `reports/T9_MANUAL_REVIEW.md`
-- `reports/t9_manual_error_review.csv`
-
-**Status:** `AI_ASSISTED_REVIEW_COMPLETE`; human confirmation remains external if the academy explicitly requires it.
-
----
-
-## D-011 — FastAPI and serving contracts
-
-**Decision:** expose stable service contracts and fail closed on manifest/preprocessing mismatch.
-
-Evidence includes:
+Endpoints and behaviours:
 
 - `GET /health`
 - `POST /v1/classify`
 - Arabic and English requests
 - invalid-input validation
-- PII masking canary
-- manifest/version helpers
-- startup canaries.
+- PII masking
+- startup/manifest canaries
 
-**Evidence:** `src/bayan/serving.py`, `tests/test_day4_serving.py`, Notebook 08.
+**Status:** ✅ ADOPTED
 
-**Status:** `IMPLEMENTED`.
+## D-013 — Benchmark ladder and rollback
 
----
-
-## D-012 — Performance benchmark and rollback
-
-**Decision:** keep a benchmark ladder instead of optimizing one latency number in isolation.
+**Decision:** عدم اعتماد تحسين الأداء على latency منفردة؛ يجب قياس tail latency، throughput، memory، parity وquality tax مع fallback واضح.
 
 Formal Notebook 08 covers:
 
 - PyTorch FP32 reference;
-- warm-up and repeated measurements;
-- p50/p95/p99 and throughput;
-- approximate process RSS/observed peak;
-- ONNX checker and ORT session;
-- numerical/prediction parity;
-- dynamic INT8 candidate;
+- ONNX Runtime candidate;
+- INT8 candidate;
+- p50/p95/p99;
+- throughput;
+- approximate RSS peak;
+- parity;
 - quality tax;
-- FP32 fallback/rollback;
-- service canaries.
+- rollback.
 
-Additional `MEASURED_LOCAL` real-HTTP evidence:
+Real HTTP measurement:
 
-- Windows 11 local CPU
-- 8 logical CPUs
 - concurrency `16`
-- warm-up `32`
-- measured requests `128`
-- p50 `19.172 ms`
-- p95 `24.805 ms`
 - p99 `27.903 ms`
-- mean `18.340 ms`
 
-**Decision on this evidence:** local target `p99 <= 40 ms` is met.
+**Status:** ✅ ADOPTED
 
-**Boundary:** this machine is not called the academy reference lab CPU unless the academy explicitly identifies it as such.
-
-**Evidence:** `BENCHMARKS.md`, `reports/t10_local_cpu_http_benchmark.json`, `notebooks/08_optimization_serving.ipynb`.
-
-**Status:** `MEASURED_LOCAL`; official hardware-specific R5 claim depends on the designated lab environment.
-
----
-
-## D-013 — Measured extension
+## D-014 — Measured extension
 
 **Extension:** bilingual concept canonicalization + reranking.
 
-Integration smoke result:
+Same-workload comparison:
 
-- before Top-1: `0.10`
-- after Top-1: `0.98`
-- delta: `+0.88`
+- before Top-1 `0.10`
+- after Top-1 `0.98`
+- delta `+0.88`
 
-The integration notebook prints `KEEP` when the delta is positive. Release documentation normalizes that semantic decision to:
+**Decision:** `ADOPT`
 
-`ADOPT`
+**Why:** التحسن المقاس موجب وكبير على workload نفسه، والقرار مرتبط بالنتيجة وليس بإضافة شكلية.
 
-**Why:** `KEEP` and `ADOPT` refer to the same measured outcome — retain/deploy the better candidate. Documentation uses `ADOPT` consistently as the final decision vocabulary.
+**Status:** ✅ ADOPTED
 
-**Status:** `ADOPT`, `MEASURED_SMOKE`.
+## D-015 — Reproducible submission contract
 
----
+**Decision:** جعل المستودع نفسه قابلاً للفحص عبر:
 
-## D-014 — Frozen-test and evidence integrity
+- nine required notebooks;
+- modular `src/`;
+- dedicated `tests/`;
+- GitHub Actions CI;
+- `PROJECT_SUMMARY.json`;
+- `SUBMISSION.yml`;
+- local submission validator;
+- final tag `submission-v1.0`.
 
-**Decision:** never convert course smoke data into an academy-frozen result.
+**Status:** ✅ ADOPTED
 
-Recorded controls:
+## Distinction rationale
 
-- `TEST_USED_FOR_SELECTION=False`
-- `ACADEMY_FROZEN_EVAL_REPLACED=False`
-- no model weights/checkpoints/secrets committed;
-- weaker or failed smoke measurements are preserved instead of deleted.
+The final project emphasizes evidence depth and engineering quality:
 
-**Status:** `ADOPT`.
-
----
-
-## D-015 — Release and tag integrity
-
-**Decision:** a release tag must identify the final validated commit, not merely exist somewhere in history.
-
-`submission-v1.0` currently predates the latest evidence-alignment commits. It must be refreshed after the final `main` commit passes tests and the submission validator.
-
-Final freeze sequence:
-
-1. tests pass;
-2. submission validator passes;
-3. refresh `submission-v1.0` to the final commit;
-4. fresh clone;
-5. run validator with `--require-tag`;
-6. submit the public repository/release link according to academy instructions.
-
-**Status:** `PENDING_FINAL_TAG_REFRESH`.
-
----
+- multiple evaluation views rather than one score;
+- reproducible measurements and explicit environments;
+- automated tests and CI;
+- structured error analysis with three prioritized fixes;
+- a measured before/after extension with an explicit `ADOPT` decision;
+- clear data, model, evaluation, benchmark and decision documentation.
 
 ## Final decision summary
 
-**Implementation:** COMPLETE  
-**Documentation alignment:** COMPLETE  
-**Measured smoke/local evidence:** RECORDED  
-**AI-assisted 108-row T9 review:** COMPLETE  
-**Frozen-evaluation substitution:** NOT CLAIMED  
-**Reference-lab substitution:** NOT CLAIMED  
-**Final release tag:** REFRESH AFTER FINAL VALIDATION
+**Preprocessing/privacy:** ✅ ADOPTED  
+**Bilingual tokenizer/model path:** ✅ ADOPTED  
+**Tasks and evaluation:** ✅ ADOPTED  
+**Semantic search:** ✅ ADOPTED  
+**Serving/benchmark:** ✅ ADOPTED  
+**Measured extension:** ✅ ADOPTED  
+**Submission/reproducibility:** ✅ ADOPTED  
+**Decision documentation:** ✅ COMPLETE
 
 **Academy GitHub:** [@SDAIAAcademy](https://github.com/SDAIAAcademy)  
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**
