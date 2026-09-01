@@ -1,12 +1,13 @@
 # Bayan — Bilingual Applied NLP Capstone
 
 [![Tests](https://github.com/Yousef0197/sda_nlp-bayan-capstone/actions/workflows/tests.yml/badge.svg)](https://github.com/Yousef0197/sda_nlp-bayan-capstone/actions/workflows/tests.yml)
+[![SDAIA Academy](https://img.shields.io/badge/GitHub-%40SDAIAAcademy-181717?logo=github)](https://github.com/SDAIAAcademy)
 
 مشروع تطبيقي ثنائي اللغة في معالجة اللغة الطبيعية ضمن برنامج **SDA-AIE-211 — Natural Language Processing with Transformers**.
 
 **Student:** Yousef Al-Mutiri  
 **Repository:** `Yousef0197/sda_nlp-bayan-capstone`  
-**Academy:** أكاديمية سدايا — **#SDAIA**  
+**Academy:** [@SDAIAAcademy](https://github.com/SDAIAAcademy) — أكاديمية سدايا — **#SDAIA**  
 **Instructor:** Meaad Al-Marri | ميعاد المري
 
 ## Evidence status
@@ -201,4 +202,5 @@ This repository intentionally distinguishes:
 - external academy-frozen evaluation,
 - and final release/tag integrity.
 
+**Academy GitHub:** [@SDAIAAcademy](https://github.com/SDAIAAcademy)  
 **#SDAIA #Bayan #NLP #ArabicNLP #AppliedNLP**
