@@ -230,3 +230,16 @@ def test_final_mode_rejects_tag_that_does_not_point_to_head(tmp_path: Path):
     )
     stale = validate_project(tmp_path, require_git_tag=True)
     assert any("must point to HEAD" in error for error in stale.errors)
+
+
+def test_canonical_notebook_release_evidence_is_consistent():
+    root = Path(__file__).resolve().parents[1]
+    notebook_path = root / "notebooks" / "bayan_capstone.ipynb"
+    notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
+    text = json.dumps(notebook, ensure_ascii=False)
+
+    assert "Extension decision: KEEP" not in text
+    assert "REVIEW_TABLE_READY_NOT_CLAIMED_AS_HUMAN_REVIEW" not in text
+    assert "Human review is deliberately not fabricated here" not in text
+    assert "Extension decision: ADOPT" in text
+    assert "COMPLETE_108_REVIEWED_ERRORS_IN_REPORT" in text
