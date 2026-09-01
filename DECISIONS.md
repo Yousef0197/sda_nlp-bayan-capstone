@@ -238,7 +238,7 @@
 
 ## D-012 — Measured Extension
 
-**Status:** ✅ COMPLETE
+**Implementation status:** ✅ COMPLETE
 
 **Extension:** bilingual concept canonicalization + reranking.
 
@@ -246,9 +246,11 @@
 
 - Top-1 delta: `+0.88`
 
-**Decision:** KEEP
+**Decision:** ADOPT
 
-**Result:** PASS
+**T12 status:** ✅ PASS
+
+تم اعتماد الامتداد بعد القياس لأن المقارنة قبل/بعد أظهرت تحسنًا موجبًا في Top-1 بمقدار `+0.88`.
 
 ---
 
