@@ -1,5 +1,7 @@
 name: tests
 
+# Validate the committed repository snapshot. Gate D measured evidence is
+# persisted on main before this workflow is expected to certify the snapshot.
 on:
   push:
     branches: [main]
