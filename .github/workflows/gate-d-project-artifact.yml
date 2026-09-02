@@ -8,6 +8,7 @@ on:
       - "data/sample/bayan_day4_validation.csv"
       - "notebooks/08_optimization_serving.ipynb"
       - ".github/workflows/gate-d-project-artifact.yml"
+      - "tests/test_submission_completion.py"
       - "STUDENT_PROFILE.md"
       - "reports/PEER_REVIEW_DISPOSITION.md"
   workflow_dispatch:
