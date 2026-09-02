@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "checks": [
+    "Required project structure",
+    "Nine valid notebooks and Core markers",
+    "PROJECT_SUMMARY.json contract",
+    "SUBMISSION.yml contract",
+    "No forbidden or oversized tracked artefacts"
+  ],
+  "warnings": [
+    "Run again with --require-tag after creating submission-v1.0.",
+    "Open the repository and Colab links in a private browser window; visibility is not verifiable offline."
+  ],
+  "errors": []
+}

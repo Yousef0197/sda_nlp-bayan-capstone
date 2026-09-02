@@ -1,0 +1,236 @@
+{
+  "gate_d_status": "PASS",
+  "result_label": "MEASURED",
+  "artefact_role": "PROJECT_ARTIFACT",
+  "budget_provenance": "STUDENT_DEFINED_BEFORE_MEASUREMENT",
+  "measured_at_utc": "2026-09-02T07:16:25.807996+00:00",
+  "environment": {
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "python": "3.12.14",
+    "torch": "2.14.0+cpu",
+    "onnx": "1.22.0",
+    "onnxruntime": "1.29.0",
+    "cpu_count": 4,
+    "torch_threads": 4,
+    "accelerator": "CPU"
+  },
+  "model": {
+    "id": "distilbert/distilbert-base-multilingual-cased",
+    "base_revision": "45c032ab32cc946ad88a166f7cb282f58c753c2e",
+    "training_mode": "partial_finetune_cpu_frozen_base",
+    "seed": 42,
+    "epochs_run": 12,
+    "selected_epoch": 12,
+    "checkpoint_sha256": "c71cc6543d6c7026ca4194cfdf583962bad43f11b7dcd83da9d36384c7d902c2",
+    "label_map": {
+      "0": "digital_service",
+      "1": "health",
+      "2": "permit",
+      "3": "transport"
+    }
+  },
+  "preprocessing_version": "ar-en-v1",
+  "workload": {
+    "path": "data/sample/bayan_day4_validation.csv",
+    "sha256": "63753fa00cdc0cb7dc4acc518b81c2c163cb45c149fc357797d78a75450eccb2",
+    "source_path": "data/sample/bayan_day2_classification.csv",
+    "source_sha256": "c50de92fdab1aa36b19cf4c0f6e31c0bc521f70d6690635e839d7ba9ec7e9a77",
+    "split": "validation",
+    "total_count": 8,
+    "arabic_count": 4,
+    "english_count": 4,
+    "batch_size": 4,
+    "max_length": 64
+  },
+  "budget": {
+    "max_p95_ms": 1000.0,
+    "min_throughput_items_s": 0.1,
+    "max_quality_tax": 0.05,
+    "target_device": "cpu"
+  },
+  "training": {
+    "learning_rate": 0.0001,
+    "history": [
+      {
+        "epoch": 1,
+        "mean_loss": 1.4337018132209778,
+        "validation_macro_f1": 0.17142857142857143
+      },
+      {
+        "epoch": 2,
+        "mean_loss": 1.3614763816197712,
+        "validation_macro_f1": 0.14285714285714288
+      },
+      {
+        "epoch": 3,
+        "mean_loss": 1.3378043572107952,
+        "validation_macro_f1": 0.43452380952380953
+      },
+      {
+        "epoch": 4,
+        "mean_loss": 1.3385908206303914,
+        "validation_macro_f1": 0.42500000000000004
+      },
+      {
+        "epoch": 5,
+        "mean_loss": 1.2810360590616863,
+        "validation_macro_f1": 0.5416666666666666
+      },
+      {
+        "epoch": 6,
+        "mean_loss": 1.2879594365755718,
+        "validation_macro_f1": 0.5333333333333333
+      },
+      {
+        "epoch": 7,
+        "mean_loss": 1.2687162558237712,
+        "validation_macro_f1": 0.5333333333333333
+      },
+      {
+        "epoch": 8,
+        "mean_loss": 1.2402504086494446,
+        "validation_macro_f1": 0.43452380952380953
+      },
+      {
+        "epoch": 9,
+        "mean_loss": 1.2094566424687703,
+        "validation_macro_f1": 0.5166666666666666
+      },
+      {
+        "epoch": 10,
+        "mean_loss": 1.1751574277877808,
+        "validation_macro_f1": 0.5166666666666666
+      },
+      {
+        "epoch": 11,
+        "mean_loss": 1.182871679464976,
+        "validation_macro_f1": 0.5166666666666666
+      },
+      {
+        "epoch": 12,
+        "mean_loss": 1.161183734734853,
+        "validation_macro_f1": 0.625
+      }
+    ],
+    "best_validation_macro_f1": 0.625
+  },
+  "candidates": {
+    "pytorch_fp32": {
+      "status": "PASS",
+      "benchmark": {
+        "warmup": 5,
+        "repetitions": 30,
+        "items_per_call": 4,
+        "p50_ms": 54.0649665,
+        "p95_ms": 55.574312199999994,
+        "p99_ms": 56.67111098,
+        "mean_ms": 54.16334093333333,
+        "min_ms": 53.141767,
+        "max_ms": 56.927076,
+        "throughput_items_s": 73.85068814206603,
+        "rss_start_mb": 1627.828125,
+        "rss_peak_observed_mb": 1627.828125,
+        "rss_observed_delta_mb": 0.0
+      },
+      "quality": 0.625,
+      "artifact_size_mb": 519.0318756103516
+    },
+    "onnx_fp32": {
+      "status": "PASS",
+      "benchmark": {
+        "warmup": 5,
+        "repetitions": 30,
+        "items_per_call": 4,
+        "p50_ms": 34.2056645,
+        "p95_ms": 34.84366065,
+        "p99_ms": 38.90770296000001,
+        "mean_ms": 34.4392213,
+        "min_ms": 33.984399,
+        "max_ms": 40.461951,
+        "throughput_items_s": 116.14664469779981,
+        "rss_start_mb": 1627.83203125,
+        "rss_peak_observed_mb": 1627.83203125,
+        "rss_observed_delta_mb": 0.0
+      },
+      "quality": 0.625,
+      "quality_tax": 0.0,
+      "parity": {
+        "prediction_agreement": 1.0,
+        "max_abs_logit_diff": 7.152557373046875e-07
+      },
+      "artifact_size_mb": 516.358226776123,
+      "sha256": "eaed8c657c64c0c788fd4cc8b53acedd119fb5a512555611d79981178dd05728"
+    },
+    "onnx_int8": {
+      "status": "REJECT",
+      "benchmark": {
+        "warmup": 5,
+        "repetitions": 30,
+        "items_per_call": 4,
+        "p50_ms": 18.728989,
+        "p95_ms": 19.21005985,
+        "p99_ms": 19.66006259,
+        "mean_ms": 18.7904775,
+        "min_ms": 18.662238,
+        "max_ms": 19.782306,
+        "throughput_items_s": 212.87378141401672,
+        "rss_start_mb": 1844.17578125,
+        "rss_peak_observed_mb": 1844.17578125,
+        "rss_observed_delta_mb": 0.0
+      },
+      "quality": 0.5166666666666666,
+      "quality_tax": 0.10833333333333339,
+      "parity": {
+        "prediction_agreement": 0.75,
+        "max_abs_logit_diff": 0.11956474184989929
+      },
+      "artifact_size_mb": 129.45967960357666,
+      "sha256": "a529cfe2e5ca4bf21122b356bd306495ea31980b437b6528d0ef777783ba34fc",
+      "budget": {
+        "latency_ok": true,
+        "quality_ok": false,
+        "throughput_ok": true,
+        "budget_met": false
+      }
+    }
+  },
+  "selected_runtime": {
+    "name": "onnx_fp32",
+    "artifact_sha256": "eaed8c657c64c0c788fd4cc8b53acedd119fb5a512555611d79981178dd05728",
+    "artifact_size_mb": 516.358226776123,
+    "int8_status": "MEASURED_NOT_SELECTED",
+    "rollback": "pytorch_fp32_checkpoint"
+  },
+  "quality": {
+    "metric": "macro_f1_validation_full_workload",
+    "fp32": 0.625,
+    "selected": 0.625,
+    "quality_tax": 0.0
+  },
+  "budget_assessment": {
+    "status": "PASS",
+    "latency_ok": true,
+    "quality_ok": true,
+    "throughput_ok": true,
+    "budget_met": true
+  },
+  "api": {
+    "health_status": 200,
+    "arabic_status": 200,
+    "english_status": 200,
+    "invalid_input_status": 422
+  },
+  "canaries": [
+    {
+      "name": "arabic-digital-service",
+      "status": "PASS",
+      "label": "digital_service"
+    },
+    {
+      "name": "english-transport",
+      "status": "PASS",
+      "label": "transport"
+    }
+  ],
+  "elapsed_s": 21.858154315999997
+}

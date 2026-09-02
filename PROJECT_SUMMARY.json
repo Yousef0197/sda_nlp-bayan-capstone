@@ -71,5 +71,15 @@
     "reproducibility": "COMPLETE",
     "explanation_and_limits": "COMPLETE",
     "measured_extension": "COMPLETE"
+  },
+  "gate_d": {
+    "status": "PASS",
+    "artefact_role": "PROJECT_ARTIFACT",
+    "result_label": "MEASURED",
+    "evidence": "reports/t10_project_artifact_benchmark.json",
+    "model_id": "distilbert/distilbert-base-multilingual-cased",
+    "preprocessing_version": "ar-en-v1",
+    "budget_provenance": "STUDENT_DEFINED_BEFORE_MEASUREMENT",
+    "quality_metric": "macro_f1_validation_full_workload"
   }
 }

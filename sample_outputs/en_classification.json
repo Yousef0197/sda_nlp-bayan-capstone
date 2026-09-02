@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "http_status": 200,
+  "request": {
+    "text": "The bus did not arrive on time",
+    "language": "en"
+  },
+  "response": {
+    "request_id": "3768f5c4-af41-4bdc-bdbd-be57798a28f2",
+    "language": "en",
+    "prediction": {
+      "label": "transport",
+      "confidence": 0.3813604891000334
+    },
+    "latency_ms": 0.0,
+    "model": {
+      "id": "distilbert/distilbert-base-multilingual-cased",
+      "version": "c71cc6543d6c",
+      "runtime": "onnx_fp32",
+      "preprocessing_version": "ar-en-v1"
+    }
+  }
+}
