@@ -1,0 +1,61 @@
+name: finalize-submission-tag
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/finalize-submission-tag.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-retag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout final main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install verification dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest numpy
+
+      - name: Run repository tests
+        env:
+          PYTHONPATH: src
+        run: pytest -q
+
+      - name: Run submission validator
+        env:
+          PYTHONPATH: src
+        run: python scripts/validate_submission.py .
+
+      - name: Point local final tag at verified HEAD
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -fa submission-v1.0 "$GITHUB_SHA" -m "Bayan capstone final submission | SDA-AIE-211 | @SDAIAAcademy"
+          test "$(git rev-list -n 1 submission-v1.0)" = "$GITHUB_SHA"
+          echo "LOCAL_FINAL_TAG_MATCH=PASS"
+
+      - name: Validate required final tag
+        env:
+          PYTHONPATH: src
+        run: python scripts/validate_submission.py . --require-tag
+
+      - name: Push verified final tag
+        run: |
+          git push origin refs/tags/submission-v1.0 --force
+          echo "FINAL_TAG_PUSH=PASS"
