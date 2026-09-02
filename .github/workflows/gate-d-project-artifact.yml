@@ -1,0 +1,101 @@
+name: gate-d-project-artifact
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/run_gate_d_project_artifact.py"
+      - "data/sample/bayan_day4_validation.csv"
+      - "notebooks/08_optimization_serving.ipynb"
+      - ".github/workflows/gate-d-project-artifact.yml"
+      - "STUDENT_PROFILE.md"
+      - "reports/PEER_REVIEW_DISPOSITION.md"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  measure-project-artifact:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install CPU PyTorch
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install Gate D dependencies
+        run: |
+          python -m pip install -r requirements-day4.txt
+          python -m pip install pytest numpy
+
+      - name: Run measured Gate D project artifact
+        env:
+          PYTHONPATH: src
+          HF_HUB_DISABLE_TELEMETRY: "1"
+          DO_NOT_TRACK: "1"
+          ORT_DISABLE_TELEMETRY: "1"
+        run: python scripts/run_gate_d_project_artifact.py
+
+      - name: Preserve submission validator report
+        env:
+          PYTHONPATH: src
+        run: |
+          python scripts/validate_submission.py . \
+            --json-report reports/submission_validation.json
+
+      - name: Run complete test suite
+        env:
+          PYTHONPATH: src
+        run: pytest -q
+
+      - name: Verify generated Gate D contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("reports/t10_project_artifact_benchmark.json").read_text())
+          assert report["gate_d_status"] == "PASS"
+          assert report["artefact_role"] == "PROJECT_ARTIFACT"
+          assert report["result_label"] == "MEASURED"
+          assert report["budget_assessment"]["status"] == "PASS"
+
+          validator = json.loads(Path("reports/submission_validation.json").read_text())
+          assert validator["status"] == "PASS"
+          assert validator["errors"] == []
+
+          print("GATE_D_GENERATED_EVIDENCE=PASS")
+          PY
+
+      - name: Commit measured small evidence
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            PROJECT_SUMMARY.json \
+            reports/t10_project_artifact_benchmark.json \
+            reports/submission_validation.json \
+            sample_outputs/ar_classification.json \
+            sample_outputs/en_classification.json \
+            sample_outputs/invalid_input.json
+          if git diff --cached --quiet; then
+            echo "Measured evidence already current."
+          else
+            git commit -m "perf: record measured Gate D project artifact"
+            git push origin HEAD:main
+          fi

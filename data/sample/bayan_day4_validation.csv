@@ -1,0 +1,9 @@
+example_id,split,language,text,label
+D-007,validation,ar,لم يصل رمز التحقق للخدمة الرقمية,digital_service
+D-008,validation,en,The verification code did not arrive,digital_service
+D-017,validation,ar,كيف أجدد التصريح المنتهي,permit
+D-018,validation,en,How can I renew an expired permit,permit
+D-027,validation,ar,أين أجد نتيجة الموعد الطبي,health
+D-028,validation,en,Where can I find my medical appointment result,health
+D-037,validation,ar,تغير وقت وصول الحافلة,transport
+D-038,validation,en,The bus arrival time has changed,transport
