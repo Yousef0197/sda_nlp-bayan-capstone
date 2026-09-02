@@ -27,6 +27,9 @@ def test_submission_safe_sample_outputs_exist() -> None:
         "sample_outputs/en_classification.json",
         "sample_outputs/invalid_input.json",
     }
+    phone_pattern = re.compile(
+        r"(?<![A-Za-z0-9])(?:\+?966|0)?5\d{8}(?![A-Za-z0-9])"
+    )
     for relative in expected:
         path = ROOT / relative
         assert path.is_file(), relative
@@ -34,7 +37,9 @@ def test_submission_safe_sample_outputs_exist() -> None:
         assert payload.get("status") == "PASS"
         serialized = json.dumps(payload, ensure_ascii=False)
         assert "@" not in serialized
-        assert not re.search(r"(?:\+?966|0)?5\d{8}", serialized)
+        # Require a standalone Saudi-mobile pattern. Random UUID/hash digit runs are
+        # machine identifiers, not PII, and must not produce a false positive.
+        assert not phone_pattern.search(serialized)
 
 
 def test_gate_d_project_artifact_report_is_measured_and_passed() -> None:
